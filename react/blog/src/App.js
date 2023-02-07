@@ -57,8 +57,22 @@ function App() {
         <h4>{ 글제목[2] }</h4>
         <p>{ 글내용 }</p>
       </div>
+
+      <Modal></Modal>
+
     </div>
   );
+}
+
+// Component => 태그를 간단하게 함수로 묶을 수 있음. function 을 분리하기 때문에 변수를 가져오기 어려움
+function Modal() {
+  return (
+    <div className='modal'>
+      <h4>제목</h4>
+      <p>날짜</p>
+      <p>상세내용</p>
+    </div>
+  )
 }
 
 export default App;

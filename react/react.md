@@ -10,12 +10,13 @@
 
 ## Part 1 : 블로그 제작 & 기초 문법
 
-### 기초 문법
+### JSX 문법
 
-- JSX 문법
-    1. html 에 class 넣을 땐 className 을 사용한다.
-    2. 변수를 html에 넣을 때는 {중괄호} 를 사용
-    3. html 에 style 속성을 넣고 싶으면 `<div style={ {color : 'blue', fontSize : '30px'} }> 글씨 </div>` { 속성명 : '속성값' } 방식으로 넣어야된다.
+1. html 에 class 넣을 땐 className 을 사용한다.
+2. 변수를 html에 넣을 때는 {중괄호} 를 사용
+3. html 에 style 속성을 넣고 싶으면 `<div style={ {color : 'blue', fontSize : '30px'} }> 글씨 </div>` { 속성명 : '속성값' } 방식으로 넣어야된다.
+
+<br>
 
 ### state
     
@@ -44,4 +45,43 @@
                 글제목변경(copy);
             }
             ```
-    
+<br>
+
+### Component
+
+> 많은 div 태그들을 한 단어로 줄이고 싶을 때 사용한다.
+
+- 사용법
+    ```javascript
+    function Modal() {
+        return ( <div></div> )
+    }
+
+    let Modal = () => {
+        return ( <div></div> )
+    }
+    ```
+
+- 사용하는 경우
+    - 사이트에 반복해서 출연하는 HTML 덩어리들
+    - 내용이 매우 자주 변경될 것 같은 HTML 덩어리들
+    - 다른 페이지를 만들고 싶다면 그 페이지의 HTML 내용을 하나의 Component 로 만드는 것이 좋다.
+    - 다른 팀원과 협업할 때 웹페이지를 Component 단위로 나눠서 작업을 분배하기도 한다.
+
+- html 태그짤 때 유의점
+    - function return() 안에 태그를 넣는데, 두개의 태그를 병렬로 사용하면 안된다.
+        - fragment 문법
+
+- Component 는 복잡한 html 을 한 단어로 치환할 수 있다.
+    - function 을 새로 만들어서 return() 에 합치고 싶은 html 태그를 넣으면 된다.
+
+- 장단점
+    - 장점
+        - HTML 을 한 단어로 축약할 수 있다.
+    - 단점
+        - 함수가 분리되기 때문에 변수를 사용할 때 가져오기 어렵다.
+
+- 유의사항
+    - component 작명할 땐 영어대문자로 보통 작명한다.
+    - function App(){} 내부에서 만들면 안된다.
+        - App(){} 또한 Component 생성 문법이기 때문
