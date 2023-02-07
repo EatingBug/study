@@ -11,6 +11,7 @@ function App() {
   let [글제목, a] = useState(['남자 코트 추천', '강남 우동맛집', '파이썬독학']);
   let [글내용, b] = useState('2월 17일 발행');
   let [like, updateLike] = useState(0);
+  let [modal, setModal] = useState(false);
 
   function plusLike() {
     updateLike(like + 1);
@@ -45,6 +46,7 @@ function App() {
       </div>
       <button onClick={ sortTitle }>가나다순 정렬</button>
       <button onClick={ changeTitle }>Change Title</button>
+      <button onClick={ ()=> { setModal(!modal)} }>글수정</button>
       <div className='list'>
         <h4>{ 글제목[0] } <span onClick={ plusLike }>👍</span> { like } </h4>
         <p>{ 글내용 }</p>
@@ -58,7 +60,9 @@ function App() {
         <p>{ 글내용 }</p>
       </div>
 
-      <Modal></Modal>
+      {
+        modal == true? <Modal></Modal> : ''
+      }
 
     </div>
   );
