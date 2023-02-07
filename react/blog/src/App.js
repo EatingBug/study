@@ -19,13 +19,21 @@ function App() {
   function changeTitle() {
     a(preArray => {
       const newArray = [...preArray];
-      if (newArray[0] === '남자 코트 추천') {
-        newArray[0] = '여자 코트 추천';
-      }
-      else {
-        newArray[0] = '남자 코트 추천';
+      for (let i = 0; i < newArray.length; i++) {
+        if (newArray[i] === '남자 코트 추천') {
+          newArray[i] = '여자 코트 추천';
+          break;
+        }
       }
       return newArray;
+    });
+  }
+
+  function sortTitle() {
+    a(preArray => {
+      const sortArray = [...preArray];
+      sortArray.sort();
+      return sortArray;
     });
   }
 
@@ -35,8 +43,9 @@ function App() {
       <div className="black-nav">
         <h4>블로그</h4>
       </div>
+      <button onClick={ sortTitle }>가나다순 정렬</button>
+      <button onClick={ changeTitle }>Change Title</button>
       <div className='list'>
-        <button onClick={ changeTitle }>Change Title</button>
         <h4>{ 글제목[0] } <span onClick={ plusLike }>👍</span> { like } </h4>
         <p>{ 글내용 }</p>
       </div>

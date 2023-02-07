@@ -29,3 +29,19 @@
     - state 는 state 변경함수를 써서 state 를 변경해야한다. => 변경함수를 안쓰면 html 재렌더링 안됨
     - `let [ 따봉, 따봉변경 ] = useState(0);`
         - 변경 방법 : `따봉변경(변경하려는 State 값)`
+
+    - state 값 변경원리(#중요)
+        - state 변경함수(변경하려는 state값) 이 동작할 때 기존 state값 과 변경하려는 state 값을 비교하여 같으면 변경을 안한다.
+            - state 가 array, object 데이터일 때는 주소값을 비교함.
+        - 다음코드가 동작하지 않는 이유는 `let copyArray = 글제목;` 에서 copyArray 가 기존 state 값과 같은 주소를 갖게되므로 값이 변경되도 변경사항이 반영되지 않는다.
+            ```javascript
+            let [글제목, 글제목변경] = useState(['남자코트 추천', '강남 우동맛집', '파이썬독학']);
+
+            function changeState() {
+                
+                let copyArray = 글제목; // => let copyArray = [...글제목];
+                copyArray[0] = '여자코트 추천';
+                글제목변경(copy);
+            }
+            ```
+    
