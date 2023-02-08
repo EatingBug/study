@@ -192,4 +192,28 @@ arr.map(function(a, i) {
     // 변수 여러개를 import 할 때
     import {a, b} from './data.js';
     ```
-] 
+
+### 라우팅
+
+> 여러 페이지를 보여주고 싶을 때 사용하는 외부 라이브러리 `react-router-dom` 을 이용해서 링크에 해당하는 html 태그들을 보여줄 수 있다.
+
+- 페이지를 나누고 싶으면 html 파일 여러개 만들면 가능하지만, React 는 html 파일을 하나만 사용함.
+    - 그래서 React 에서는 다른 페이지 요청하면 내부 `<div>` 를 갈아치워서 만들어야됨
+    - `react-router-dom` 이라는 외부 라이브러리를 설치해서 구현하면 쉬움
+
+```javascript
+import { Routes, Route, Link } from 'react-router-dom'
+
+function App(){
+  return (
+    (생략)
+    <Routes>
+      <Route path="/detail" element={ <div>상세페이지임</div> } />
+      <Route path="/about" element={ <div>어바웃페이지임</div> } />
+    </Routes>
+  )
+}
+```
+- `/detail`, `/about` URL 로 이동하면 `element` 속성에 있는 태그들을 Route 가 보여준다.
+- Route 사용시 페이지 태그가 길어질 수 있으므로 외부 파일을 만들어서 `import / export` 사용을 권장한다.
+- 페이지 이동은 `<Link to='/'>Home</Link>` 태그를 사용하여 이동할 수 있다.

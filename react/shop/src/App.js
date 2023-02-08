@@ -4,6 +4,8 @@ import { Button, Navbar, Container, Nav, Row, Col } from 'react-bootstrap';
 import shoes from './shoes.jpeg';
 import data from './data.js';
 import { useState } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import Detail from './detail.js';
 
 function App() {
 
@@ -11,30 +13,41 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar bg="dark" variant="dark">
+
+      <Navbar bg="light" variant="light">
         <Container>
           <Navbar.Brand href="#home">Shop</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Category</Nav.Link>
+            <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="/detail">Detail</Nav.Link>
             <Nav.Link href="#pricing">Event</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
 
-      <div className='main-bg' style={{ backgroundImage: 'url(' + shoes + ')' }}></div>
+      <Link to="/">Home</Link>
 
-      <Container>
-        <Row>
-          {
-            shoe.map(function (a, i) {
-              return (
-                <Product title={shoe[i].title} content={shoe[i].content} price={shoe[i].price} />
-              )
-            })
-          }
-        </Row>
-      </Container>
+      <Routes>
+        <Route path='/' element={
+          <>
+            <div className='main-bg' style={{ backgroundImage: 'url(' + shoes + ')' }}></div>
+            <Container>
+              <Row>
+                {
+                  shoe.map(function (a, i) {
+                    return (
+                      <Product id={i} title={shoe[i].title} content={shoe[i].content} price={shoe[i].price} />
+                    )
+                  })
+                }
+              </Row>
+            </Container>
+          </>
+        } />
+        <Route path='/detail' element={<Detail />} />
+        <Route path='/about' element={<div>어바웃페이지</div>} />
+      </Routes>
+
 
       <Button variant="primary">Primary</Button>
     </div>
@@ -42,10 +55,9 @@ function App() {
 }
 
 function Product(props) {
-
   return (
     <Col>
-      <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="80%" />
+      <img src={"https://codingapple1.github.io/shop/shoes" + (props.id + 1) + ".jpg"} width="80%" />
       <h4>{props.title}</h4>
       <p>{props.content}</p>
       <p>{props.price} 원</p>
