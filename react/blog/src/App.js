@@ -30,8 +30,16 @@ function App() {
 
   function addTitle(input) {
     a(preArray => {
-      const newArray = [input];
-      newArray.push(...preArray);
+      const newArray = [...preArray];
+      newArray.unshift(input);
+      return newArray;
+    });
+  }
+
+  function deleteTitle(i) {
+    a(preArray => {
+      const newArray = [...preArray];
+      newArray.splice(i, 1);
       return newArray;
     });
   }
@@ -69,6 +77,7 @@ function App() {
             <h4 onClick={ () => {setModal(true); setModalTitle(title);} }>{ title } 
             <span onClick={ (e) => {e.stopPropagation(); updateLike(i)} }>👍</span> { like[i] } </h4>
             <p>{ 글내용 }</p>
+            <button onClick={ () => {deleteTitle(i)} }>삭제</button>
           </div> )
         })
       }

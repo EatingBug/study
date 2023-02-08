@@ -36,7 +36,8 @@
 
     - state 값 변경원리(#중요)
         - state 변경함수(변경하려는 state값) 이 동작할 때 기존 state값 과 변경하려는 state 값을 비교하여 같으면 변경을 안한다.
-            - state 가 array, object 데이터일 때는 주소값을 비교함.
+            - **state 가 array, object 데이터일 때는 주소값을 비교함.**
+
         - 다음코드가 동작하지 않는 이유는 `let copyArray = 글제목;` 에서 copyArray 가 기존 state 값과 같은 주소를 갖게되므로 값이 변경되도 변경사항이 반영되지 않는다.
             ```javascript
             let [글제목, 글제목변경] = useState(['남자코트 추천', '강남 우동맛집', '파이썬독학']);
@@ -154,3 +155,12 @@ arr.map(function(a, i) {
 - 이벤트 버블링 : 이벤트가 상위태그로 전염되는 현상 있음.
     - `e.stopPropagation()` 으로 이벤트 버블링 방지 가능.
 - `e.target.value` : 현재 이벤트가 발생한 곳의 값을 알려준다.
+
+
+### 이미지 첨부방법
+
+- css 에서 `background-image : url('경로')` 첨부하는 방법
+- js 파일에서 `import image from '경로'` 로 import 하고 `<div style={{backgroundImage : 'url('+image+')'}}></div>` 로 html 에 style 로 가져오는 방법
+- `<img src="/public 파일이름">` 로 public 에서 이미지 경로를 가져오는 방법
+    - 주의사항
+        - url 서브 경로를 사용할 경우 경로를 수정해줘야됨. `process.env.PUBLIC_URL + '파일경로'`
