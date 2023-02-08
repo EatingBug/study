@@ -88,3 +88,26 @@
     - component 작명할 땐 영어대문자로 보통 작명한다.
     - function App(){} 내부에서 만들면 안된다.
         - App(){} 또한 Component 생성 문법이기 때문
+
+### Map
+
+> html 반복되는 태그들을 하나로 묶어줄 수 있다.
+
+- array 자료 갯수만큼 함수안의 코드 실행
+- 함수의 파라미터는 array 안에 있는 자료다.
+- return 에 값을 넣으면 array 로 담아준다.
+
+```javascript
+let arr = [1,2,3];
+
+arr.map(function(a, i) {
+    return (
+        <div className="list" key={i}>
+            <h4>a</h4>
+            <button>like[i]</button>
+        </div>
+    )
+})
+```
+- map 안에 function 첫번째 인자는 arr 의 인자, i 는 0부터 arr이 길이만큼 늘어나는 인자
+    - 유용한 파라미터 2개 사용가능

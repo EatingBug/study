@@ -10,12 +10,8 @@ function App() {
   // State 왜 씀? => State 는 html 이랑 다르게 변경되면 자동 렌더링됨. 변경사항이 많은곳에 사용
   let [글제목, a] = useState(['남자 코트 추천', '강남 우동맛집', '파이썬독학']);
   let [글내용, b] = useState('2월 17일 발행');
-  let [like, updateLike] = useState(0);
+  let [like, setLike] = useState([0, 0, 0]);
   let [modal, setModal] = useState(false);
-
-  function plusLike() {
-    updateLike(like + 1);
-  }
 
   function changeTitle() {
     a(preArray => {
@@ -28,6 +24,14 @@ function App() {
       }
       return newArray;
     });
+  }
+
+  function updateLike(i) {
+    setLike(preArray => {
+      const likeArray = [...preArray];
+      likeArray[i] += 1;
+      return likeArray;
+    })
   }
 
   function sortTitle() {
@@ -47,18 +51,16 @@ function App() {
       <button onClick={ sortTitle }>가나다순 정렬</button>
       <button onClick={ changeTitle }>Change Title</button>
       <button onClick={ ()=> { setModal(!modal)} }>글수정</button>
-      <div className='list'>
-        <h4>{ 글제목[0] } <span onClick={ plusLike }>👍</span> { like } </h4>
-        <p>{ 글내용 }</p>
-      </div>
-      <div className='list'>
-        <h4>{ 글제목[1] }</h4>
-        <p>{ 글내용 }</p>
-      </div>
-      <div className='list'>
-        <h4>{ 글제목[2] }</h4>
-        <p>{ 글내용 }</p>
-      </div>
+
+      {
+        글제목.map(function(title, i) {
+          return (
+          <div className='list' key={i}>
+            <h4>{ title } <span onClick={ () => updateLike(i) }>👍</span> { like[i] } </h4>
+            <p>{ 글내용 }</p>
+          </div> )
+        })
+      }
 
       {
         modal == true? <Modal></Modal> : ''
