@@ -111,3 +111,46 @@ arr.map(function(a, i) {
 ```
 - map 안에 function 첫번째 인자는 arr 의 인자, i 는 0부터 arr이 길이만큼 늘어나는 인자
     - 유용한 파라미터 2개 사용가능
+
+### props
+
+> 부모 컴포넌트에서 자식 컴포넌트로 변수, 함수, state 를 쓰고 싶을 때 props 로 전송해서 쓸 수 있다.
+
+- Modal 컴포넌트에서 내부에 글제목 state 를 사용하고 싶다면
+    - 자식 컴포넌트에서 사용하고 싶은 곳에 `<자식컴포넌트 작명={state명}/>`
+    - 자식컴포넌트 만드는 function에서 props라는 파라미터 등록 후 `props.작명` 으로 사용가능
+
+    ```javascript
+    function App (){
+        let [글제목, 글제목변경] = useState(['남자코트 추천', '강남 우동맛집', '파이썬독학']);
+
+        function changeModal() {
+            // 모달 변경 로직
+        }
+
+        return (
+            <div>
+            <Modal 모달제목변경={ changeModal } 글제목={글제목}></Modal>
+            </div>
+        )
+    }
+
+    function Modal(props){
+        return (
+            <div className="modal">
+            <h4>{ props.글제목[0] }</h4>
+            <p>날짜</p>
+            <p>상세내용</p>
+            <button onClick={ props.모달제목변경 }>
+            </div>
+        )
+    }
+    ```
+- 유의사항
+    - 부모 -> 자식 컴포넌트로만 전송할 수 있다.
+
+### 이벤트 핸들러
+
+- 이벤트 버블링 : 이벤트가 상위태그로 전염되는 현상 있음.
+    - `e.stopPropagation()` 으로 이벤트 버블링 방지 가능.
+- `e.target.value` : 현재 이벤트가 발생한 곳의 값을 알려준다.

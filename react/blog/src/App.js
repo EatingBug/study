@@ -12,6 +12,8 @@ function App() {
   let [글내용, b] = useState('2월 17일 발행');
   let [like, setLike] = useState([0, 0, 0]);
   let [modal, setModal] = useState(false);
+  let [modalTitle, setModalTitle] = useState('');
+  let [입력값, 입력값변경] = useState('');
 
   function changeTitle() {
     a(preArray => {
@@ -22,6 +24,14 @@ function App() {
           break;
         }
       }
+      return newArray;
+    });
+  }
+
+  function addTitle(input) {
+    a(preArray => {
+      const newArray = [input];
+      newArray.push(...preArray);
       return newArray;
     });
   }
@@ -56,14 +66,18 @@ function App() {
         글제목.map(function(title, i) {
           return (
           <div className='list' key={i}>
-            <h4>{ title } <span onClick={ () => updateLike(i) }>👍</span> { like[i] } </h4>
+            <h4 onClick={ () => {setModal(true); setModalTitle(title);} }>{ title } 
+            <span onClick={ (e) => {e.stopPropagation(); updateLike(i)} }>👍</span> { like[i] } </h4>
             <p>{ 글내용 }</p>
           </div> )
         })
       }
 
+      <input onChange={(e)=>{입력값변경(e.target.value);}}></input>
+      <button onClick={ () => {addTitle(입력값)} }>글생성</button>
+
       {
-        modal == true? <Modal></Modal> : ''
+        modal == true? <Modal changeTitle={ changeTitle } title={ modalTitle }></Modal> : ''
       }
 
     </div>
@@ -71,12 +85,13 @@ function App() {
 }
 
 // Component => 태그를 간단하게 함수로 묶을 수 있음. function 을 분리하기 때문에 변수를 가져오기 어려움
-function Modal() {
+function Modal(props) {
   return (
     <div className='modal'>
-      <h4>제목</h4>
+      <h4>{ props.title }</h4>
       <p>날짜</p>
       <p>상세내용</p>
+      <button onClick={ props.changeTitle }>글수정</button>
     </div>
   )
 }
