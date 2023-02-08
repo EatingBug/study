@@ -217,3 +217,46 @@ function App(){
 - `/detail`, `/about` URL 로 이동하면 `element` 속성에 있는 태그들을 Route 가 보여준다.
 - Route 사용시 페이지 태그가 길어질 수 있으므로 외부 파일을 만들어서 `import / export` 사용을 권장한다.
 - 페이지 이동은 `<Link to='/'>Home</Link>` 태그를 사용하여 이동할 수 있다.
+
+<br>
+
+- `useNavigate()` : 페이지 이동기능을 만들 때 사용 (=Link 랑 같은기능)
+    ```javascript
+    function App() {
+        let navigate = useNavigate();
+
+        return (
+            <button onClick={()=>{ navigate('/detail')}}>디테일로 이동</button>
+        )
+    }
+    ```
+    - 해당 버튼을 누르면 `/detail` 페이지로 이동가능
+    - `navigate(2)` : 앞으로 2번 가기
+    - `navigate(-1)` : 뒤로 1번 가기
+
+- 404 페이지 : 유저가 이상한 경로로 접속했을 때 보여줄 수 있음
+    ```html
+    <Route path='*' element={ <div>없는페이지</div>}>
+    ```
+    - Route path 속성에 * 을 넣으면 앞에서 선언한 경로 외에 모든 경로에서 보여진다.
+
+- Nested Routes : 서브 경로를 만들 때 사용
+    - `/about/member` , `/about/location` 이렇게 만들어도 되지만
+        - `/about` + `/about/member` 태그를 합쳐서 보여주고 싶은 경우 Nested Routes 를 사용한다.
+    ```html
+    <Route path="/about" element={ <About/> } >  
+        <Route path="member" element={ <div>멤버들</div> } />
+        <Route path="location" element={ <div>회사위치</div> } />
+    </Route>
+    ```
+    ```javascript
+    function About(){
+        return (
+            <div>
+            <h4>about페이지임</h4>
+            <Outlet></Outlet> // 하위 서브경로 태그들이 보여지는 곳
+            </div>
+        )
+    }
+    ```
+    - `<Outlet>` : nested routes 안의 element 들을 어디에 보여줄지 표기하는 곳 
