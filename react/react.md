@@ -164,3 +164,32 @@ arr.map(function(a, i) {
 - `<img src="/public 파일이름">` 로 public 에서 이미지 경로를 가져오는 방법
     - 주의사항
         - url 서브 경로를 사용할 경우 경로를 수정해줘야됨. `process.env.PUBLIC_URL + '파일경로'`
+
+### import / export
+
+- App.js 에서 외부 js 를 사용하고 싶을 때 import / export 를 사용한다.
+- `data.js` (export)
+    ```javascript
+    let a = 10;
+    let b = 100;
+    let data = [
+        {
+            id : 0,
+            title : "White and Black",
+            content : "Born in France",
+            price : 120000
+        }
+        ]
+    // 변수 한개만 export 할 때
+    export default data;
+    // 변수 여러개 export 할 때
+    export {a, b};
+    ```
+- `App.js` (import)
+    ```javascript
+    // 변수 한개를 import 할 때는 변수명을 자유롭게 작명가능
+    import 변수명 from './data.js(data.js 경로)';
+    // 변수 여러개를 import 할 때
+    import {a, b} from './data.js';
+    ```
+] 
