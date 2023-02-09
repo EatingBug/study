@@ -13,11 +13,12 @@ function App() {
 
   let [shoe, setShoe] = useState(data);
   let navigate = useNavigate();
+  let [btnNum, setBtnNum] = useState(0);
+  let [load, setLoad] = useState(false);
 
   function moreShoe(data) {
-    setShoe(preArray => {
-      let newShoe = [...shoe];
-      newShoe.push(...data);
+    setShoe(() => {
+      let newShoe = [...shoe, ...data];
       return newShoe;
     })
   }
@@ -50,6 +51,28 @@ function App() {
                   })
                 }
               </Row>
+              {
+                btnNum > 1
+                  ? null
+                  : <button onClick={() => {
+                    setLoad(true)
+                    axios.get('https://codingapple1.github.io/shop/data' + (2 + btnNum) + '.json')
+                      .then((response) => {
+                        setLoad(false)
+                        moreShoe(response.data)
+                        setBtnNum(btnNum + 1)
+                      })
+                      .catch(() => {
+                        setLoad(false)
+                        console.log('요청실패')
+                      })
+                  }}>버튼</button>
+              }
+              {
+                load == true
+                  ? <div>로딩중입니다.</div>
+                  : null
+              }
             </Container>
           </>
         } />
@@ -65,15 +88,8 @@ function App() {
         </Route>
         <Route path='/*' element={<div>없는 페이지</div>} />
       </Routes>
-      <button onClick={() => {
-        axios.get('https://codingapple1.github.io/shop/data2.json')
-          .then((response) => {
-            moreShoe(response.data)
-          })
-          .catch(() => {
-            console.log('요청실패')
-          })
-      }}>버튼</button>
+
+
     </div>
   );
 }
@@ -90,7 +106,7 @@ function Product(props) {
 
   return (
     <Col>
-      <img src={"https://codingapple1.github.io/shop/shoes" + (props.id + 1) + ".jpg"} width="80%" />
+      <img src={"https://codingapple1.github.io/shop/shoes" + (props.id + 1) + ".jpg"} width="350px" />
       <h4>{props.title}</h4>
       <p>{props.content}</p>
       <p>{props.price} 원</p>

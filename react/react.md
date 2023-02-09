@@ -26,7 +26,8 @@
         - [Lifecycle](#lifecycle)
         - [useEffect](#useeffect)
     - [ajax 로 서버와 통신](#ajax-%EB%A1%9C-%EC%84%9C%EB%B2%84%EC%99%80-%ED%86%B5%EC%8B%A0)
-        - [사용법](#%EC%82%AC%EC%9A%A9%EB%B2%95)
+        - [Axios 를 사용한 서버 통신](#axios-%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EC%84%9C%EB%B2%84-%ED%86%B5%EC%8B%A0)
+            - [사용법](#%EC%82%AC%EC%9A%A9%EB%B2%95)
 
 <!-- /TOC -->
 
@@ -453,7 +454,13 @@ let {id} = useParams();
 
 <br>
 
-### 사용법
+### Axios 를 사용한 서버 통신
+
+> Axios 는 서버의 응답데이터를 자동으로 JSON 형식데이터를 Array 로 변환해주기 때문에 편리하다.
+
+<br>
+
+#### 사용법
 
 ```javascript
 import axios from 'axios'
@@ -471,3 +478,25 @@ function App(){
   )
 }
 ```
+
+- post 요청 방법
+    ```javascript
+    axios.post('URL', {name : 'kim'}) // JSON 형식으로 요청메시지 전달
+    .then()
+    ```
+
+- 동시에 AJAX 요청 여러개 하려면
+    ```javascript
+    Promise.all( [axios.get('URL1'), axios.get('URL2')] )
+    .then()
+    ```
+
+- fetch() 를 이용한 GET/POST 요청 방법
+    ```javascript
+    fetch('URL')
+    .then(Response => Response.json())
+    .then((response) => {
+        console.log(response)
+    })
+    ```
+    - fetch() 는 JSON 을 object/array 로 직접 바꾸는 작업이 필요하다.
