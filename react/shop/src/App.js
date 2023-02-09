@@ -5,6 +5,7 @@ import shoes from './shoes.jpeg';
 import data from './data.js';
 import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
+import styled from 'styled-components'
 import Detail from './pages/detail.js';
 
 function App() {
@@ -61,12 +62,22 @@ function App() {
 }
 
 function Product(props) {
+
+  let navigate = useNavigate();
+
+  let DetailBtn = styled.button`
+    background-color : yellow;
+    color : black;
+    padding : 10px;
+  `
+
   return (
     <Col>
       <img src={"https://codingapple1.github.io/shop/shoes" + (props.id + 1) + ".jpg"} width="80%" />
       <h4>{props.title}</h4>
       <p>{props.content}</p>
       <p>{props.price} 원</p>
+      <DetailBtn onClick={()=> navigate('/detail/'+props.id)}>상세보기</DetailBtn>
     </Col>
   )
 }

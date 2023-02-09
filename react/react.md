@@ -21,6 +21,7 @@
         - [페이지](#%ED%8E%98%EC%9D%B4%EC%A7%80)
         - [Nested Routes](#nested-routes)
         - [URL 파라미터 받기](#url-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%EB%B0%9B%EA%B8%B0)
+    - [Styled-Components](#styled-components)
 
 <!-- /TOC -->
 
@@ -315,3 +316,46 @@ let {id} = useParams();
 ```
 - Route path 에 `/:id` 를 통해 URL 파라미터를 매칭시켜줄 수 있고, useParams 를 통해 파라미터 값을 가져올 수 있다.
 - 파라미터에 해당하는 배열 변수값을 가져오기 위해서는 `props` 를 사용하여 `filter`, `find` 로 원하는 값을 분리할 수 있다.
+
+<br>
+
+## Styled-Components
+
+> 컴포넌트가 많은 경우 원하지 않는 컴포넌트에 CSS 가 적용되거나, CSS 파일이 너무 길어져서 수정이 어려운 경우 컴포넌트에 스타일을 입혀서 사용하기 위한 도구
+
+- 사용법
+    ```javascript
+    import styled from 'styled-components';
+
+    let Box = styled.div`
+        padding : 20px;
+        color : grey
+    `;
+    let YellowBtn = styled.button`
+        background : yellow;
+        color : black;
+        padding : 10px;
+    `;
+
+    function Detail(){
+    return (
+        <div>
+            <Box>
+                <YellowBtn>버튼임</YellowBtn>
+            </Box>
+        </div>
+        )
+    }
+    ```
+
+- 장단점
+    - 장점
+        - CSS 파일을 오픈할 필요없이 JS 에서 바로 스타일을 넣을 수 있다.
+        - 작성한 스타일이 다른 JS 파일로 오염되지 않는다.
+            - 일반 CSS 파일도 App.module.css 명으로 변경하면 App.js 만 적용되게 할 수 있다.
+        - 페이지 로딩시간 단축 => 태그로 넣어주기 때문
+    - 단점
+        - JS 파일이 매우 복잡해진다.
+            - 일반 컴포넌트인지 styled 인지 구분하기 어렵다.
+        - JS 파일 간 중복 디자인이 있을 때는 import 해서 사용해야된다.
+        - CSS 담당자가 있을 때 협업 시 불편
