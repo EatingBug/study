@@ -22,6 +22,9 @@
         - [Nested Routes](#nested-routes)
         - [URL 파라미터 받기](#url-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%EB%B0%9B%EA%B8%B0)
     - [Styled-Components](#styled-components)
+    - [Lifecycle 과 useEffect](#lifecycle-%EA%B3%BC-useeffect)
+        - [Lifecycle](#lifecycle)
+        - [useEffect](#useeffect)
 
 <!-- /TOC -->
 
@@ -359,3 +362,47 @@ let {id} = useParams();
             - 일반 컴포넌트인지 styled 인지 구분하기 어렵다.
         - JS 파일 간 중복 디자인이 있을 때는 import 해서 사용해야된다.
         - CSS 담당자가 있을 때 협업 시 불편
+
+<br>
+
+## Lifecycle 과 useEffect
+
+### Lifecycle
+
+- 컴포넌트는 Lifecycle 개념이 존재한다.
+- 컴포넌트는
+    1. 생성이 될 수도 있고 (mount)
+    2. 재렌더링이 될 수도 있고 (update)
+    3. 삭제가 될 수도 있다. (unmount)
+
+- hook 을 이용해서 해당 생명주기에 특정 코드를 실행하게 할 수 있다.
+    - `useEffect`
+<br>
+
+### useEffect
+
+> useEffect 안에 있는 코드는 html 렌더링 후에 동작한다. 오래걸리는 작업을 useEffect() 안에 사용하면 Html 렌더링 시간에 영향을 주지않는다.
+
+- 용도
+    - 서버에서 데이터 가져오는 작업
+    - 어려운 연산
+    - 타이머
+
+- 이름이 Effect 인 이유
+    - sideEffect : 핵심기능 외에 부가기능
+    - sideEffect 라는 이름에서 유래했다.
+
+- 사용법
+    ```javascript
+    import {useState, useEffect} from 'react';
+
+    function Detail(){
+
+        useEffect(()=>{
+            //여기적은 코드는 컴포넌트 로드 & 업데이트 마다 실행됨
+            console.log('안녕')
+        });
+    
+        return (생략)
+    }
+    ```
