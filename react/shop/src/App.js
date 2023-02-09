@@ -20,7 +20,7 @@ function App() {
           <Navbar.Brand href="#home">Shop</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
-            <Nav.Link onClick={() => { navigate('/detail') }}>Detail</Nav.Link>
+            <Nav.Link onClick={() => { navigate('/detail/0') }}>Detail</Nav.Link>
             <Nav.Link href="/event">Event</Nav.Link>
           </Nav>
         </Container>
@@ -43,7 +43,7 @@ function App() {
             </Container>
           </>
         } />
-        <Route path='/detail' element={<Detail />} />
+        <Route path='/detail/:id' element={<Detail shoe={shoe}/>} />
         <Route path='/about' element={<About />} >
           {/* Nested Route */}
           <Route path='member' element={<div>멤버임</div>} />

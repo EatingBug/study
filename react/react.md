@@ -2,6 +2,30 @@
 
 > HTML, CSS, JS 개발을 편리하게 만들어주는 도구
 
+<!-- TOC -->
+
+- [React](#react)
+    - [React 장점](#react-%EC%9E%A5%EC%A0%90)
+    - [Part 1 : 블로그 제작 & 기초 문법](#part-1--%EB%B8%94%EB%A1%9C%EA%B7%B8-%EC%A0%9C%EC%9E%91--%EA%B8%B0%EC%B4%88-%EB%AC%B8%EB%B2%95)
+        - [JSX 문법](#jsx-%EB%AC%B8%EB%B2%95)
+        - [state](#state)
+            - [state 값 변경원리#중요](#state-%EA%B0%92-%EB%B3%80%EA%B2%BD%EC%9B%90%EB%A6%AC%EC%A4%91%EC%9A%94)
+        - [Component](#component)
+        - [Map](#map)
+        - [props](#props)
+        - [이벤트 핸들러](#%EC%9D%B4%EB%B2%A4%ED%8A%B8-%ED%95%B8%EB%93%A4%EB%9F%AC)
+        - [이미지 첨부방법](#%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B2%A8%EB%B6%80%EB%B0%A9%EB%B2%95)
+        - [import / export](#import--export)
+    - [라우팅](#%EB%9D%BC%EC%9A%B0%ED%8C%85)
+        - [useNavigate](#usenavigate)
+        - [페이지](#%ED%8E%98%EC%9D%B4%EC%A7%80)
+        - [Nested Routes](#nested-routes)
+        - [URL 파라미터 받기](#url-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%EB%B0%9B%EA%B8%B0)
+
+<!-- /TOC -->
+
+<br>
+
 ## React 장점
 
 - Single Page Application
@@ -22,33 +46,37 @@
 <br>
 
 ### state
-    
+
 - 사용법
     - `let [a, b] = useState('남자 코트 추천');`
     - 일반 변수 대신 state 이용하여 잠깐 변수를 저장해둘 수 있다.
+
 - 사용하는 이유(#중요)
     - **state 는 변동사항이 생기면 state 쓰는 html 도 자동으로 재렌더링 해준다.**
     - 그냥 변수를 html 에 사용하면 변경사항이 자동으로 반영되지 않음
+
 - state 값 변경하기
     - state 는 state 변경함수를 써서 state 를 변경해야한다. => 변경함수를 안쓰면 html 재렌더링 안됨
     - `let [ 따봉, 따봉변경 ] = useState(0);`
         - 변경 방법 : `따봉변경(변경하려는 State 값)`
 
-    - state 값 변경원리(#중요)
-        - state 변경함수(변경하려는 state값) 이 동작할 때 기존 state값 과 변경하려는 state 값을 비교하여 같으면 변경을 안한다.
-            - **state 가 array, object 데이터일 때는 주소값을 비교함.**
 
-        - 다음코드가 동작하지 않는 이유는 `let copyArray = 글제목;` 에서 copyArray 가 기존 state 값과 같은 주소를 갖게되므로 값이 변경되도 변경사항이 반영되지 않는다.
-            ```javascript
-            let [글제목, 글제목변경] = useState(['남자코트 추천', '강남 우동맛집', '파이썬독학']);
+#### state 값 변경원리(#중요)
 
-            function changeState() {
-                
-                let copyArray = 글제목; // => let copyArray = [...글제목];
-                copyArray[0] = '여자코트 추천';
-                글제목변경(copy);
-            }
-            ```
+- state 변경함수(변경하려는 state값) 이 동작할 때 기존 state값 과 변경하려는 state 값을 비교하여 같으면 변경을 안한다.
+    - **state 가 array, object 데이터일 때는 주소값을 비교함.**
+
+- 다음코드가 동작하지 않는 이유는 `let copyArray = 글제목;` 에서 copyArray 가 기존 state 값과 같은 주소를 갖게되므로 값이 변경되도 변경사항이 반영되지 않는다.
+    ```javascript
+    let [글제목, 글제목변경] = useState(['남자코트 추천', '강남 우동맛집', '파이썬독학']);
+
+    function changeState() {
+        
+        let copyArray = 글제목; // => let copyArray = [...글제목];
+        copyArray[0] = '여자코트 추천';
+        글제목변경(copy);
+    }
+    ```
 <br>
 
 ### Component
@@ -113,6 +141,8 @@ arr.map(function(a, i) {
 - map 안에 function 첫번째 인자는 arr 의 인자, i 는 0부터 arr이 길이만큼 늘어나는 인자
     - 유용한 파라미터 2개 사용가능
 
+<br>
+
 ### props
 
 > 부모 컴포넌트에서 자식 컴포넌트로 변수, 함수, state 를 쓰고 싶을 때 props 로 전송해서 쓸 수 있다.
@@ -156,6 +186,7 @@ arr.map(function(a, i) {
     - `e.stopPropagation()` 으로 이벤트 버블링 방지 가능.
 - `e.target.value` : 현재 이벤트가 발생한 곳의 값을 알려준다.
 
+<br>
 
 ### 이미지 첨부방법
 
@@ -164,6 +195,8 @@ arr.map(function(a, i) {
 - `<img src="/public 파일이름">` 로 public 에서 이미지 경로를 가져오는 방법
     - 주의사항
         - url 서브 경로를 사용할 경우 경로를 수정해줘야됨. `process.env.PUBLIC_URL + '파일경로'`
+
+<br>
 
 ### import / export
 
@@ -193,7 +226,11 @@ arr.map(function(a, i) {
     import {a, b} from './data.js';
     ```
 
-### 라우팅
+- 분리된 js 파일에서 변수를 받아올 때는 `props` 를 사용하여 가져오면 된다.
+
+<br>
+
+## 라우팅
 
 > 여러 페이지를 보여주고 싶을 때 사용하는 외부 라이브러리 `react-router-dom` 을 이용해서 링크에 해당하는 html 태그들을 보여줄 수 있다.
 
@@ -220,7 +257,8 @@ function App(){
 
 <br>
 
-- `useNavigate()` : 페이지 이동기능을 만들 때 사용 (=Link 랑 같은기능)
+### `useNavigate()`
+- 페이지 이동기능을 만들 때 사용 (=Link 랑 같은기능)
     ```javascript
     function App() {
         let navigate = useNavigate();
@@ -234,13 +272,18 @@ function App(){
     - `navigate(2)` : 앞으로 2번 가기
     - `navigate(-1)` : 뒤로 1번 가기
 
-- 404 페이지 : 유저가 이상한 경로로 접속했을 때 보여줄 수 있음
+### 404 페이지
+- 유저가 이상한 경로로 접속했을 때 보여줄 수 있음
     ```html
     <Route path='*' element={ <div>없는페이지</div>}>
     ```
     - Route path 속성에 * 을 넣으면 앞에서 선언한 경로 외에 모든 경로에서 보여진다.
 
-- Nested Routes : 서브 경로를 만들 때 사용
+<br>
+
+### Nested Routes
+
+- 서브 경로를 만들 때 사용
     - `/about/member` , `/about/location` 이렇게 만들어도 되지만
         - `/about` + `/about/member` 태그를 합쳐서 보여주고 싶은 경우 Nested Routes 를 사용한다.
     ```html
@@ -259,4 +302,16 @@ function App(){
         )
     }
     ```
-    - `<Outlet>` : nested routes 안의 element 들을 어디에 보여줄지 표기하는 곳 
+- `<Outlet>` : nested routes 안의 element 들을 어디에 보여줄지 표기하는 곳 
+
+### URL 파라미터 받기
+
+```javascript
+// App.js
+<Route path='/detail/:id' element={<Detail shoe={shoe}/>} />
+
+// Detail.js
+let {id} = useParams();
+```
+- Route path 에 `/:id` 를 통해 URL 파라미터를 매칭시켜줄 수 있고, useParams 를 통해 파라미터 값을 가져올 수 있다.
+- 파라미터에 해당하는 배열 변수값을 가져오기 위해서는 `props` 를 사용하여 `filter`, `find` 로 원하는 값을 분리할 수 있다.
