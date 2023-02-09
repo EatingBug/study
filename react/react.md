@@ -28,6 +28,10 @@
     - [ajax 로 서버와 통신](#ajax-%EB%A1%9C-%EC%84%9C%EB%B2%84%EC%99%80-%ED%86%B5%EC%8B%A0)
         - [Axios 를 사용한 서버 통신](#axios-%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EC%84%9C%EB%B2%84-%ED%86%B5%EC%8B%A0)
             - [사용법](#%EC%82%AC%EC%9A%A9%EB%B2%95)
+        - [fetch 를 이용한 GET/POST 요청 방법](#fetch-%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-getpost-%EC%9A%94%EC%B2%AD-%EB%B0%A9%EB%B2%95)
+    - [전환 애니메이션 만들기](#%EC%A0%84%ED%99%98-%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98-%EB%A7%8C%EB%93%A4%EA%B8%B0)
+    - [props 로 state 변수를 주고받기 어려울 때](#props-%EB%A1%9C-state-%EB%B3%80%EC%88%98%EB%A5%BC-%EC%A3%BC%EA%B3%A0%EB%B0%9B%EA%B8%B0-%EC%96%B4%EB%A0%A4%EC%9A%B8-%EB%95%8C)
+    - [Redux 이용하기](#redux-%EC%9D%B4%EC%9A%A9%ED%95%98%EA%B8%B0)
 
 <!-- /TOC -->
 
@@ -490,13 +494,96 @@ function App(){
     Promise.all( [axios.get('URL1'), axios.get('URL2')] )
     .then()
     ```
+<br>
 
-- fetch() 를 이용한 GET/POST 요청 방법
+### fetch() 를 이용한 GET/POST 요청 방법
+
+```javascript
+fetch('URL')
+.then(Response => Response.json())
+.then((response) => {
+    console.log(response)
+})
+```
+- fetch() 는 JSON 을 object/array 로 직접 바꾸는 작업이 필요하다.
+
+<br>
+
+## 전환 애니메이션 만들기
+
+1. 애니메이션 동작 전 className 만들기
+2. 애니메이션 동작 후 className 만들기
+3. transition 추가
+
+```css
+.start {
+  opacity: 0;
+}
+.end {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+```
+- 애니메이션 적용하려는 태그의 className을 state 변수를 사용하여 `start ` => `start end` 로 변경해주는 로직을 만들면 된다.
     ```javascript
-    fetch('URL')
-    .then(Response => Response.json())
-    .then((response) => {
-        console.log(response)
-    })
+    function TabContent({탭}){
+
+        let [fade, setFade] = useState('')
+
+        useEffect(()=>{
+            setFade('end')
+        }, [탭])
+
+        return (
+            <div className={'start ' + fade}>
+            { [<div>내용0</div>, <div>내용1</div>, <div>내용2</div>][탭] }
+            </div>
+        )
+    }
     ```
-    - fetch() 는 JSON 을 object/array 로 직접 바꾸는 작업이 필요하다.
+
+<br>
+
+## props 로 state 변수를 주고받기 어려울 때
+
+> Component 가 많아질 경우, 자식 Component 에서 state 변수를 사용할 경우 모든 Component 가 props 변수를 전달해주어야 하는 문제가 발생한다.
+
+<img src="https://codingapple.com/wp-content/uploads/2022/05/%EC%BA%A1%EC%B2%984-2.png">
+
+- 해결방법
+    - Redux 사용하기 (추천)
+
+    - Context API 사용하기 (잘안씀)
+        1. state 변경 시 쓸데없는 컴포넌트까지 전부 재렌더링이 된다.
+        2. useContext() 를 쓰고있는 컴포넌트는 나중에 다른 파일에서 재사용할 때 Context 를 import 하는게 귀찮아질 수 있다.
+        
+        - 사용법
+            ```javascript
+            // App.js (export)
+            export let 재고context = React.createContext();
+
+            function App(){
+                let [재고, 재고변경] = useState([10,11,12]);
+
+                return (
+                    <Context1.Provider value={ {재고, shoes} }>
+                    <Detail shoes={shoes}/>
+                    </Context1.Provider>
+                )
+            }
+            // Detail.js (import)
+
+            import {useState, useEffect, useContext} from 'react';
+            import {Context1} from './../App.js';
+
+            function Detail(){
+                let {재고} = useContext(Context1)
+
+                return (
+                    <div>{재고}</div>
+                )
+            }
+            ```
+<br>
+
+## Redux 이용하기
