@@ -25,6 +25,8 @@
     - [Lifecycle 과 useEffect](#lifecycle-%EA%B3%BC-useeffect)
         - [Lifecycle](#lifecycle)
         - [useEffect](#useeffect)
+    - [ajax 로 서버와 통신](#ajax-%EB%A1%9C-%EC%84%9C%EB%B2%84%EC%99%80-%ED%86%B5%EC%8B%A0)
+        - [사용법](#%EC%82%AC%EC%9A%A9%EB%B2%95)
 
 <!-- /TOC -->
 
@@ -377,6 +379,7 @@ let {id} = useParams();
 
 - hook 을 이용해서 해당 생명주기에 특정 코드를 실행하게 할 수 있다.
     - `useEffect`
+
 <br>
 
 ### useEffect
@@ -406,3 +409,65 @@ let {id} = useParams();
         return (생략)
     }
     ```
+
+- 생명주기에 따른 사용법
+    1. 재렌더링마다 코드를 실행
+        ```javascript
+        useEffect(()=>{ 실행할코드 })
+        ```
+    2. 컴포넌트 mount 시 1회만 실행
+        ```javascript
+        useEffect(()=>{ 실행할코드 }, [])
+        ```
+    3. `useEffect` 안의 코드 실행 전에 항상 실행
+        ```javascript
+        useEffect(()=>{ 
+            return ()=>{
+                실행할코드
+            }
+        })
+        ```
+    4. 컴포넌트 unmount시 1회 실행
+        ```javascript
+        useEffect(()=>{ 
+            return ()=>{
+                실행할코드 
+            }
+        }, [])
+        ```
+    5. `state1` 변수가 변경될 때만 코드를 실행
+        ```javascript
+        useEffect(()=>{ 
+            실행할코드 
+        }. [state1])
+        ```
+<br>
+
+## ajax 로 서버와 통신
+
+- AJAX : 서버에 GET, POST 요청을 할 때 새로고침 없이 데이터를 주고받을 수 있게 도와주는 간단한 브라우저 기능이다.
+- AJAX로 GET/POST 요청하는 방법은
+    1. XMLHttpRequest 사용하기
+    2. fetch() 를 통해 요청하기
+    3. axios 외부 라이브러리 사용하기 => 가장 편함.
+
+<br>
+
+### 사용법
+
+```javascript
+import axios from 'axios'
+
+function App(){
+  return (
+    <button onClick={()=>{
+      axios.get('https://codingapple1.github.io/shop/data2.json').then((결과)=>{
+        console.log(결과.data)
+      })
+      .catch(()=>{
+        console.log('실패함')
+      })
+    }}>버튼</button>
+  )
+}
+```

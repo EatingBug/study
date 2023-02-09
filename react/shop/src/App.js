@@ -7,11 +7,20 @@ import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components'
 import Detail from './pages/detail.js';
+import axios from 'axios'
 
 function App() {
 
-  let [shoe] = useState(data);
+  let [shoe, setShoe] = useState(data);
   let navigate = useNavigate();
+
+  function moreShoe(data) {
+    setShoe(preArray => {
+      let newShoe = [...shoe];
+      newShoe.push(...data);
+      return newShoe;
+    })
+  }
 
   return (
     <div className="App">
@@ -44,7 +53,7 @@ function App() {
             </Container>
           </>
         } />
-        <Route path='/detail/:id' element={<Detail shoe={shoe}/>} />
+        <Route path='/detail/:id' element={<Detail shoe={shoe} />} />
         <Route path='/about' element={<About />} >
           {/* Nested Route */}
           <Route path='member' element={<div>멤버임</div>} />
@@ -56,7 +65,15 @@ function App() {
         </Route>
         <Route path='/*' element={<div>없는 페이지</div>} />
       </Routes>
-
+      <button onClick={() => {
+        axios.get('https://codingapple1.github.io/shop/data2.json')
+          .then((response) => {
+            moreShoe(response.data)
+          })
+          .catch(() => {
+            console.log('요청실패')
+          })
+      }}>버튼</button>
     </div>
   );
 }
@@ -77,7 +94,7 @@ function Product(props) {
       <h4>{props.title}</h4>
       <p>{props.content}</p>
       <p>{props.price} 원</p>
-      <DetailBtn onClick={()=> navigate('/detail/'+props.id)}>상세보기</DetailBtn>
+      <DetailBtn onClick={() => navigate('/detail/' + props.id)}>상세보기</DetailBtn>
     </Col>
   )
 }
