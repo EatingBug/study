@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components'
 import Detail from './pages/detail.js';
+import Cart from './pages/cart.js'
 import axios from 'axios'
 
 function App() {
@@ -76,7 +77,14 @@ function App() {
             </Container>
           </>
         } />
-        <Route path='/detail/:id' element={<Detail shoe={shoe} />} />
+        <Route path='/detail/:id' element={
+          <Detail shoe={shoe} />
+        } />
+
+        <Route path='/cart' element={<Cart></Cart>} >
+          
+        </Route>
+
         <Route path='/about' element={<About />} >
           {/* Nested Route */}
           <Route path='member' element={<div>멤버임</div>} />

@@ -550,12 +550,32 @@ fetch('URL')
 
 <img src="https://codingapple.com/wp-content/uploads/2022/05/%EC%BA%A1%EC%B2%984-2.png">
 
+<br>
+
 - 해결방법
     - Redux 사용하기 (추천)
+        <img src="https://codingapple.com/wp-content/uploads/2022/05/%EC%BA%A1%EC%B2%98.png">
+        - `store.js` 를 `index.js` 에서 import 하면 전역에서 state 변수를 사용할 수 있다.
 
     - Context API 사용하기 (잘안씀)
-        1. state 변경 시 쓸데없는 컴포넌트까지 전부 재렌더링이 된다.
-        2. useContext() 를 쓰고있는 컴포넌트는 나중에 다른 파일에서 재사용할 때 Context 를 import 하는게 귀찮아질 수 있다.
+        1. state 변경 시 `<Context.Provider>` 하위 컴포넌트들이 state 변수를 안써도 전부 재렌더링이 된다.
+            ```html
+            <Route path="/detail/:id" element={
+                <Context1.Provider value={{ 재고, shoes}}>
+                    <Detail shoes={shoes}/> // 재고가 변경되면 사용안해도 재렌더링됨
+                </Context1.Provider>
+            } />
+            ```
+        2. useContext() 를 쓰고있는 컴포넌트는 나중에 다른 페이지에서 import 해서 재사용할 때 변수 관리에 어려움이 있을 수 있다.
+            ```javascript
+            // TabContent 를 다른 페이지에서 import 해서 재사용하려면 Context1 변수들도 같이 보내야됨
+            function TabContent({탭}){
+
+                let [fade, setFade] = useState('');
+                let { 재고 } = useContext(Context1)
+
+                (생략)
+            }
         
         - 사용법
             ```javascript
