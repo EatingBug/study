@@ -32,6 +32,7 @@
     - [전환 애니메이션 만들기](#%EC%A0%84%ED%99%98-%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98-%EB%A7%8C%EB%93%A4%EA%B8%B0)
     - [props 로 state 변수를 주고받기 어려울 때](#props-%EB%A1%9C-state-%EB%B3%80%EC%88%98%EB%A5%BC-%EC%A3%BC%EA%B3%A0%EB%B0%9B%EA%B8%B0-%EC%96%B4%EB%A0%A4%EC%9A%B8-%EB%95%8C)
     - [Redux 이용하기](#redux-%EC%9D%B4%EC%9A%A9%ED%95%98%EA%B8%B0)
+        - [사용법](#%EC%82%AC%EC%9A%A9%EB%B2%95)
 
 <!-- /TOC -->
 
@@ -607,3 +608,38 @@ fetch('URL')
 <br>
 
 ## Redux 이용하기
+
+> 왜씀? 컴포넌트간 state 공유가 간편함
+
+- state 하나를 slice 라고 부름
+- redux 에서 변수 선언을 하는 방법이 props 보다 번거롭기 때문에, 컴포넌트가 작은 프로젝트에서는 props 를 사용하는 것이 더 간단하다.
+
+<br>
+
+### 사용법
+
+```javascript
+// store.js (export)
+import { configureStore, createSlice } from '@reduxjs/toolkit'
+
+let user = createSlice({
+  name : 'user',
+  initialState : 'kim'
+})
+
+export default configureStore({
+  reducer: {
+    user : user.reducer
+  }
+}) 
+
+// Cart.js (import)
+import { useSelector } from 'react-redux'
+
+function Cart(){
+    let a = useSelector((state) => state.user ) // state 변수 중 user 만 가져온다.
+    console.log(a) // 출력 : { user : "kim" }
+
+    return (생략)
+}
+```
