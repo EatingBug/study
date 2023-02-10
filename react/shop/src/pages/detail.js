@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from 'styled-components'
 import { Nav } from 'react-bootstrap'
+import { useDispatch, useSelector } from "react-redux";
+import { addCart } from "./../store.js";
 
 function Detail(props) {
 
@@ -10,6 +12,9 @@ function Detail(props) {
     let [alert, setAlert] = useState(true);
     let [tab, setTab] = useState(0);
     let [fade2, setFade2] = useState('');
+    let dispatch = useDispatch();
+
+    let cartData = useSelector((state)=>{return state.cartData});
 
     let BackBtn = styled.button`
         color : black;
@@ -65,7 +70,12 @@ function Detail(props) {
                     <h4 className="pt-5">{product.title}</h4>
                     <p>{product.content}</p>
                     <p>{product.price} 원</p>
-                    <button className="btn btn-danger">주문하기</button>
+                    <button onClick={()=>{
+                        let data = {id : product.id, name : product.title, count : Number(amount)}
+                        console.log(data)
+                        dispatch(addCart(data))
+                        console.log(cartData);
+                    }} className="btn btn-danger" >주문하기</button>
                 </div>
             </div>
 

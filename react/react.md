@@ -33,6 +33,10 @@
     - [props 로 state 변수를 주고받기 어려울 때](#props-%EB%A1%9C-state-%EB%B3%80%EC%88%98%EB%A5%BC-%EC%A3%BC%EA%B3%A0%EB%B0%9B%EA%B8%B0-%EC%96%B4%EB%A0%A4%EC%9A%B8-%EB%95%8C)
     - [Redux 이용하기](#redux-%EC%9D%B4%EC%9A%A9%ED%95%98%EA%B8%B0)
         - [사용법](#%EC%82%AC%EC%9A%A9%EB%B2%95)
+        - [useSelector](#useselector)
+        - [state 변수 변경하는 방법](#state-%EB%B3%80%EC%88%98-%EB%B3%80%EA%B2%BD%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
+            - [useDispatch](#usedispatch)
+        - [state 가 object/array 일 경우 변경하는 법](#state-%EA%B0%80-objectarray-%EC%9D%BC-%EA%B2%BD%EC%9A%B0-%EB%B3%80%EA%B2%BD%ED%95%98%EB%8A%94-%EB%B2%95)
 
 <!-- /TOC -->
 
@@ -637,9 +641,72 @@ export default configureStore({
 import { useSelector } from 'react-redux'
 
 function Cart(){
+    // useSelector() 를 통해 Redux store 에서 데이터를 추출할 수 있다.
     let a = useSelector((state) => state.user ) // state 변수 중 user 만 가져온다.
     console.log(a) // 출력 : { user : "kim" }
 
     return (생략)
 }
 ```
+
+### `useSelector()`
+
+
+
+<br>
+
+### state 변수 변경하는 방법
+
+```javascript
+// store.js (변경함수 export)
+let user = createSlice({
+  name : 'user',
+  initialState : 'kim',
+  reducers : {
+    changeName(state){
+      return 'john ' + state
+    }
+  }
+})
+
+export let {changeName} = user.actions
+
+// Cart.js (변경함수 import)
+(Cart.js)
+
+import { useDispatch, useSelector } from "react-redux"
+import { changeName } from "./../store.js"
+
+let dispatch = useDispatch()
+
+<button onClick={()=>{
+  dispatch(changeName())
+}}>버튼임</button> 
+```
+
+#### `useDispatch()` 
+> state 변수 변경을 `store.js` 에게 요청하는 함수
+
+- `useDispatch()` 를 통해 번거롭게 state 변수를 변경하는 이유
+<img src="https://codingapple.com/wp-content/uploads/2022/05/%EC%BA%A1%EC%B2%983-%EB%B3%B5%EC%82%AC5.png" width='80%'>
+    - 디버깅 시에 각 컴포넌트에서 자체적으로 변경을 할 경우 어디서 오류가 발생하는지 찾기 어려움.
+    - 그래서 `useDispatch()` 를 통해 `store.js` 에게 변경요청을 하면 `store.js` 에서 일괄적으로 변경하는 함수를 호출한다.
+
+<br>
+
+### state 가 object/array 일 경우 변경하는 법
+
+```javascript
+// store.js 의 state 변경 함수
+let user = createSlice({
+  name : 'user',
+  initialState : {name : 'kim', age : 20},
+  reducers : {
+    increase(state, a){
+      state.age += a.payload
+    }
+  }
+})
+```
+- `increase(state, a)` 에서 a 는 파라미터인데, `a.payload` 로 파라미터 값을 가져올 수 있다.
+- `a.type` 을 하면 state 변경함수 이름을 가져올 수 있다.
