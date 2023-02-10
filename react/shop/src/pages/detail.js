@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from 'styled-components'
 import { Nav } from 'react-bootstrap'
 import { useDispatch, useSelector } from "react-redux";
-import { addCart } from "./../store.js";
+import { addItem, deleteItem } from "./../store.js";
 
 function Detail(props) {
 
@@ -71,10 +71,7 @@ function Detail(props) {
                     <p>{product.content}</p>
                     <p>{product.price} 원</p>
                     <button onClick={()=>{
-                        let data = {id : product.id, name : product.title, count : Number(amount)}
-                        console.log(data)
-                        dispatch(addCart(data))
-                        console.log(cartData);
+                        dispatch(addItem({id : product.id, name : product.title, count : Number(amount)}))
                     }} className="btn btn-danger" >주문하기</button>
                 </div>
             </div>
