@@ -37,6 +37,7 @@
         - [state 변수 변경하는 방법](#state-%EB%B3%80%EC%88%98-%EB%B3%80%EA%B2%BD%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
             - [useDispatch](#usedispatch)
         - [state 가 object/array 일 경우 변경하는 법](#state-%EA%B0%80-objectarray-%EC%9D%BC-%EA%B2%BD%EC%9A%B0-%EB%B3%80%EA%B2%BD%ED%95%98%EB%8A%94-%EB%B2%95)
+    - [LocalStorage 를 사용한 데이터 저장](#localstorage-%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%80%EC%9E%A5)
 
 <!-- /TOC -->
 
@@ -710,3 +711,11 @@ let user = createSlice({
 ```
 - `increase(state, a)` 에서 a 는 파라미터인데, `a.payload` 로 파라미터 값을 가져올 수 있다.
 - `a.type` 을 하면 state 변경함수 이름을 가져올 수 있다.
+
+
+## LocalStorage 를 사용한 데이터 저장
+
+- 브라우저에 5 MB 까지 문자 데이터를 저장할 수 있는 저장 공간
+    - LocalStorage 를 삭제하지 않는 이상 반영구적이다.
+    - 문자 데이터만 저장하기 때문에, object 나 array 를 저장할 시 데이터가 깨짐.
+        - `JSON.stringify()` 함수를 사용하여 JSON 으로 변환해서 저장한다.

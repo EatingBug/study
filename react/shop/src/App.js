@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Navbar, Container, Nav, Row, Col } from 'react-bootstrap';
 import shoes from './shoes.jpeg';
 import data from './data.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components'
 import Detail from './pages/detail.js';
@@ -16,6 +16,14 @@ function App() {
   let navigate = useNavigate();
   let [btnNum, setBtnNum] = useState(0);
   let [load, setLoad] = useState(false);
+
+  // 로컬스토리지에 최근본 상품 저장
+  useEffect(() => {
+    let watched = localStorage.getItem('watched')
+    if (watched == null) {
+      localStorage.setItem('watched', JSON.stringify([]))
+    }
+  }, [])
 
   function moreShoe(data) {
     setShoe(() => {

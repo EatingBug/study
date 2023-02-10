@@ -14,7 +14,7 @@ function Detail(props) {
     let [fade2, setFade2] = useState('');
     let dispatch = useDispatch();
 
-    let cartData = useSelector((state)=>{return state.cartData});
+    let cartData = useSelector((state) => { return state.cartData });
 
     let BackBtn = styled.button`
         color : black;
@@ -25,6 +25,15 @@ function Detail(props) {
 
     useEffect(() => {
         let a = setTimeout(() => { setAlert(false) }, 2000)
+
+        // 로컬스토리지 watched 배열에 현재 page Param 이 존재한다면 제거하고 새로 추가
+        let watched = JSON.parse(localStorage.getItem('watched'))
+        let index = watched.findIndex((data) => data == id)
+        if (index !== -1) {
+            watched.splice(index, 1)
+        }
+        watched.push(id)
+        localStorage.setItem('watched', JSON.stringify(watched))
     }, [])
 
     let [amount, setAmount] = useState(0);
@@ -70,8 +79,8 @@ function Detail(props) {
                     <h4 className="pt-5">{product.title}</h4>
                     <p>{product.content}</p>
                     <p>{product.price} 원</p>
-                    <button onClick={()=>{
-                        dispatch(addItem({id : product.id, name : product.title, count : Number(amount)}))
+                    <button onClick={() => {
+                        dispatch(addItem({ id: product.id, name: product.title, count: Number(amount) }))
                     }} className="btn btn-danger" >주문하기</button>
                 </div>
             </div>
