@@ -39,6 +39,10 @@
         - [state 가 object/array 일 경우 변경하는 법](#state-%EA%B0%80-objectarray-%EC%9D%BC-%EA%B2%BD%EC%9A%B0-%EB%B3%80%EA%B2%BD%ED%95%98%EB%8A%94-%EB%B2%95)
     - [LocalStorage 를 사용한 데이터 저장](#localstorage-%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%80%EC%9E%A5)
     - [React Query](#react-query)
+    - [성능 개선](#%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0)
+        - [개발자도구 & lazy import](#%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%8F%84%EA%B5%AC--lazy-import)
+        - [재렌더링 막는 memo, useMemo](#%EC%9E%AC%EB%A0%8C%EB%8D%94%EB%A7%81-%EB%A7%89%EB%8A%94-memo-usememo)
+        - [useTransition, useDeferredValue](#usetransition-usedeferredvalue)
 
 <!-- /TOC -->
 
@@ -757,3 +761,42 @@ let user = createSlice({
         )
     }
     ```
+<br>
+
+## 성능 개선
+
+### 개발자도구 & lazy import
+
+- 개발자도구
+    - `React Developer Tools` : props, state 조회 가능 + 컴포넌트 렌더링 시간 조회
+    - `Redux Developer Tools` : Redux store 에 있는 state 전부 확인 가능
+
+<br>
+
+- lazy import
+    - 리액트 코드를 `npm run build` 하게 되면 html, js 파일이 하나만 생성되는데 모든 페이지가 하나의 js 로 만들어지기 때문에 파일사이즈가 커진다.
+    - 메인페이지를 조회할 때 나머지 페이지들은 가져올 필요가 없기때문에 `lazy()` 를 이용해서 js 파일을 분리하면 로딩속도를 개선할 수 있다.
+    
+    ```javascript
+    (App.js)
+    import {lazy, Suspense, useEffect, useState} from 'react'
+
+    const Detail = lazy( () => import('./routes/Detail.js') )
+    const Cart = lazy( () => import('./routes/Cart.js') )
+    ```
+    - 하지만 `lazy()` 사용된 컴포넌트를 로드할 때 지연시간이 발생할 수 있는데, `Suspense` 를 이용하여 로딩중일 때 보여줄 html 을 작성할 수 있다.
+    ```javascript
+    <Suspense fallback={ <div>로딩중임</div> }>
+        <Detail shoes={shoes} />
+    </Suspense>
+    ```
+
+<br>
+
+### 재렌더링 막는 memo, useMemo
+
+<br>
+
+### useTransition, useDeferredValue
+
+<br>

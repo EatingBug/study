@@ -3,13 +3,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Navbar, Container, Nav, Row, Col } from 'react-bootstrap';
 import shoes from './shoes.jpeg';
 import data from './data.js';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
 import styled from 'styled-components'
-import Detail from './pages/detail.js';
-import Cart from './pages/cart.js'
+// import Detail from './pages/detail.js';
+// import Cart from './pages/cart.js'
 import axios from 'axios'
 import { useQuery } from 'react-query';
+
+const Detail = lazy(() => import('./pages/detail.js'))
+const Cart = lazy(() => import('./pages/cart.js'))
 
 function App() {
 
@@ -18,8 +21,8 @@ function App() {
   let [btnNum, setBtnNum] = useState(0);
   let [load, setLoad] = useState(false);
 
-  let result = useQuery('', ()=>
-    axios.get('https://codingapple1.github.io/userdata.json').then((a)=>{
+  let result = useQuery('', () =>
+    axios.get('https://codingapple1.github.io/userdata.json').then((a) => {
       return a.data
     })
   )
@@ -48,74 +51,74 @@ function App() {
           <Nav className="me-auto">
             <Nav.Link onClick={() => { navigate('/') }}>Home</Nav.Link>
             <Nav.Link onClick={() => { navigate('/detail/0') }}>Detail</Nav.Link>
-            <Nav.Link onClick={() => { navigate('/event')}}>Event</Nav.Link>
-            <Nav.Link onClick={() => { navigate('/cart')}}>Cart</Nav.Link>
+            <Nav.Link onClick={() => { navigate('/event') }}>Event</Nav.Link>
+            <Nav.Link onClick={() => { navigate('/cart') }}>Cart</Nav.Link>
           </Nav>
           <Nav className='ms-auto'>
-            { result.isLoading ? '로딩중' : result.data.name}
+            {result.isLoading ? '로딩중' : result.data.name}
           </Nav>
         </Container>
       </Navbar>
-
-      <Routes>
-        <Route path='/' element={
-          <>
-            <div className='main-bg' style={{ backgroundImage: 'url(' + shoes + ')' }}></div>
-            <Container>
-              <Row>
+      <Suspense fallback={<div>로딩중</div>}>
+        <Routes>
+          <Route path='/' element={
+            <>
+              <div className='main-bg' style={{ backgroundImage: 'url(' + shoes + ')' }}></div>
+              <Container>
+                <Row>
+                  {
+                    shoe.map(function (a, i) {
+                      return (
+                        <Product id={i} title={shoe[i].title} content={shoe[i].content} price={shoe[i].price} />
+                      )
+                    })
+                  }
+                </Row>
                 {
-                  shoe.map(function (a, i) {
-                    return (
-                      <Product id={i} title={shoe[i].title} content={shoe[i].content} price={shoe[i].price} />
-                    )
-                  })
+                  btnNum > 1
+                    ? null
+                    : <button onClick={() => {
+                      setLoad(true)
+                      axios.get('https://codingapple1.github.io/shop/data' + (2 + btnNum) + '.json')
+                        .then((response) => {
+                          setLoad(false)
+                          moreShoe(response.data)
+                          setBtnNum(btnNum + 1)
+                        })
+                        .catch(() => {
+                          setLoad(false)
+                          console.log('요청실패')
+                        })
+                    }}>버튼</button>
                 }
-              </Row>
-              {
-                btnNum > 1
-                  ? null
-                  : <button onClick={() => {
-                    setLoad(true)
-                    axios.get('https://codingapple1.github.io/shop/data' + (2 + btnNum) + '.json')
-                      .then((response) => {
-                        setLoad(false)
-                        moreShoe(response.data)
-                        setBtnNum(btnNum + 1)
-                      })
-                      .catch(() => {
-                        setLoad(false)
-                        console.log('요청실패')
-                      })
-                  }}>버튼</button>
-              }
-              {
-                load == true
-                  ? <div>로딩중입니다.</div>
-                  : null
-              }
-            </Container>
-          </>
-        } />
-        <Route path='/detail/:id' element={
-          <Detail shoe={shoe} />
-        } />
+                {
+                  load == true
+                    ? <div>로딩중입니다.</div>
+                    : null
+                }
+              </Container>
+            </>
+          } />
+          <Route path='/detail/:id' element={
+            <Detail shoe={shoe} />
+          } />
 
-        <Route path='/cart' element={<Cart></Cart>} >
-          
-        </Route>
+          <Route path='/cart' element={<Cart></Cart>} >
 
-        <Route path='/about' element={<About />} >
-          {/* Nested Route */}
-          <Route path='member' element={<div>멤버임</div>} />
-          <Route path='location' element={<div>위치정보</div>} />
-        </Route>
-        <Route path='/event' element={<Event />} >
-          <Route path='one' element={<p>첫 주문시 양배추즙 서비스</p>} />
-          <Route path='two' element={<p>생일기념 쿠폰받기</p>} />
-        </Route>
-        <Route path='/*' element={<div>없는 페이지</div>} />
-      </Routes>
+          </Route>
 
+          <Route path='/about' element={<About />} >
+            {/* Nested Route */}
+            <Route path='member' element={<div>멤버임</div>} />
+            <Route path='location' element={<div>위치정보</div>} />
+          </Route>
+          <Route path='/event' element={<Event />} >
+            <Route path='one' element={<p>첫 주문시 양배추즙 서비스</p>} />
+            <Route path='two' element={<p>생일기념 쿠폰받기</p>} />
+          </Route>
+          <Route path='/*' element={<div>없는 페이지</div>} />
+        </Routes>
+      </Suspense>
 
     </div>
   );
