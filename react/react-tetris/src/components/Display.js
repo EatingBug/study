@@ -1,9 +1,9 @@
 import React from "react";
 
-function Display(gameOver, text) {
+function Display(props) {
     return (
-        <div>{text}</div>
-    )
+        <div>{props.text}</div>
+    );
 }
 
 export default Display;

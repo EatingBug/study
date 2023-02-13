@@ -1,16 +1,16 @@
-import React from "react";
-import Cell from "./Cell";
+import React from 'react';
+import Cell from './Cell';
 
-function Stage(stage) {
+function Stage(props) {
     return (
         <div>
-            {
-                stage.map(row => row.map((cell, x)=>{
-                    <Cell key={x} type={cell[0]} />
-                }))
-            }
+            {props.stages.map((row, rowIndex) =>
+                row.map((cell, cellIndex) => (
+                    <Cell key={cellIndex} type={cell[0]} />
+                ))
+            )}
         </div>
-    )
+    );
 }
 
 export default Stage;
