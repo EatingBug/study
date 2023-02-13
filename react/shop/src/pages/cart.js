@@ -1,15 +1,24 @@
 import { Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeCount, deleteItem } from '../store'
+import { useState, memo } from 'react'
+
+let Child = memo(function() {
+    console.log('재렌더링됨')
+    return <div>자식임</div>
+})
 
 function Cart() {
 
     // 장바구니 데이터는 state 로 관리
     let cartData = useSelector((state) => state.cartData)
     let dispatch = useDispatch();
+    let [count, setCount] = useState(0)
 
     return (
         <div>
+            <Child></Child>
+            <button onClick={()=>{ setCount(count+1)}}>+</button>
             <Table striped>
                 <thead>
                     <tr>

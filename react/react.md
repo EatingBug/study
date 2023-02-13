@@ -42,6 +42,8 @@
     - [성능 개선](#%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0)
         - [개발자도구 & lazy import](#%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%8F%84%EA%B5%AC--lazy-import)
         - [재렌더링 막는 memo, useMemo](#%EC%9E%AC%EB%A0%8C%EB%8D%94%EB%A7%81-%EB%A7%89%EB%8A%94-memo-usememo)
+            - [memo](#memo)
+            - [useMemo](#usememo)
         - [useTransition, useDeferredValue](#usetransition-usedeferredvalue)
 
 <!-- /TOC -->
@@ -794,6 +796,65 @@ let user = createSlice({
 <br>
 
 ### 재렌더링 막는 memo, useMemo
+
+> 컴포넌트가 재렌더링되면 거기 안에 있는 자식 컴포넌트는 항상 함께 재렌더링되는데, 그 문제를 해결하기 위해 memo, useMemo 를 사용한다.
+
+#### `memo`
+
+- 사용법
+    ```javascript
+    import {memo, useState} from 'react'
+
+    let Child = memo( function(){
+        console.log('재렌더링됨')
+        return <div>자식임</div>
+    })
+
+    function Cart(){ 
+
+        let [count, setCount] = useState(0)
+
+        return (
+            <Child />
+            <button onClick={()=>{ setCount(count+1) }}> + </button>
+        )
+    }
+    ```
+    - 원하는 컴포넌트 정의 부분을 memo 로 감싸준다.
+    - Child로 전송되는 props 가 변하는 경우에만 재렌더링됨.
+
+- 원리
+    - memo 로 감싸진 컴포넌트는 재렌더링을 방지하기위해 기존 props 와 바뀐 props 를 비교하는 연산이 추가로 진행된다.
+    - props 가 크고 복잡하면 비교하는 과정에서 부하가 발생하기 때문에, 필요한 곳에만 사용하자.
+
+<br>
+
+#### `useMemo`
+
+> useEffect 와 비슷한 용도로, 컴포넌트 로드시 1회만 실행하고 싶은 코드가 있을 때 사용한다.
+
+- 사용법
+    ```javascript
+    import {useMemo, useState} from 'react'
+
+    function 함수(){
+        return 반복문10억번돌린결과
+    }
+
+    function Cart(){ 
+
+        let result = useMemo(()=>{ return 함수() }, [])
+
+        return (
+            <Child />
+            <button onClick={()=>{ setCount(count+1) }}> + </button>
+        )
+    }
+    ```
+    - 반복문을 10억번 돌려야하는 경우, useMemo 에 넣어두면 컴포넌트 로드시 1회만 실행된다.
+- `useEffect` 와 차이점
+    > 실행 시점의 차이
+    - `useEffect` 는 html 이 렌더링 된 후에 실행되지만, `useMemo` 는 html 이 렌더링되기 전에 실행된다.
 
 <br>
 
