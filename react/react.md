@@ -45,6 +45,8 @@
             - [memo](#memo)
             - [useMemo](#usememo)
         - [useTransition, useDeferredValue](#usetransition-usedeferredvalue)
+            - [useTransition](#usetransition)
+            - [useDeferredValue](#usedeferredvalue)
 
 <!-- /TOC -->
 
@@ -860,4 +862,88 @@ let user = createSlice({
 
 ### useTransition, useDeferredValue
 
+> 리액트 18버전부터 추가된 일관된 batching 기능
+
+- state 변경함수를 연달아 3개 사용하면 리액트가 batching 기능을 통해 재렌더링을 마지막에 1회만 처리해준다.
+    - ajax 요청, setTimeout 안에 state 변경함수가 있는 경우 batching 이 일어나지 않는다. (리액트 17버전까지)
+        - 18버전 이후로 어디에 있든간에 재렌더링은 마지막 1번만 됨.
+
 <br>
+
+#### `useTransition`
+
+> state 변경함수를 useTransition 으로 감싸주면 다른 코드들보다 나중에 처리해준다.
+
+- 사용법
+    ```javascript
+    import {useState, useTransition} from 'react'
+
+    let a = new Array(10000).fill(0)
+
+    function App(){
+        let [name, setName] = useState('')
+        let [isPending, startTransition] = useTransition()
+        
+        return (
+            <div>
+                <input onChange={ (e)=>{ 
+                    startTransition(()=>{
+                    setName(e.target.value) 
+                    })
+                }}/>
+
+                {
+                    a.map(()=>{
+                    return <div>{name}</div>
+                    })
+                }
+            </div>
+        )
+    }
+    ```
+    - `useTransition()` 사용하지않으면 input value 변경 보여주기와 `<div>` 태그 10000번 실행이 동시에 발생하기 때문에 로딩속도가 매우 느려진다.
+        - 브라우저는 Single-Threaded 이기 때문에 동시작업이 불가하고, 한번에 하나의 동작만 할 수 있다.
+    - input 이 변경되면 `setName()` 라는 변경함수가 실행되는데, `startTransition()` 으로 감싸주면
+        1. input 태그 value 변경
+        2. (나중에) `setName()` 실행 + `<div>{name}</div>` 10000번 실행
+    - `isPending` 상태값은 `startTransition()` 으로 감싼 코드가 실행중일 때 true 를 반환한다.
+        ```javascript
+        {
+            isPending ? "로딩중기다리셈" :
+            a.map(()=>{
+                return <div>{name}</div>
+            })
+        } 
+        ```
+
+<br>
+
+#### `useDeferredValue`
+
+> `startTransition()` 과 비슷하게 변동사항을 늦게 처리해주는 역할이지만, state 또는 변수 하나를 인자로 넣어 사용할 수 있다.
+
+```javascript
+import {useState, useTransition, useDeferredValue} from 'react'
+
+let a = new Array(10000).fill(0)
+
+function App(){
+  let [name, setName] = useState('')
+  let state1 = useDeferredValue(name)
+  
+  return (
+    <div>
+      <input onChange={ (e)=>{ 
+          setName(e.target.value) 
+      }}/>
+
+      {
+        a.map(()=>{
+          return <div>{state1}</div>
+        })
+      }
+    </div>
+  )
+}
+```
+- `useDeferredValue` 안에 state 를 넣으면 해당 state 가 변동사항이 생겼을 때 나중에 처리해준다. 그리고 처리결과는 `let state1`에 저장해준다.
