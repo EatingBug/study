@@ -38,6 +38,7 @@
             - [useDispatch](#usedispatch)
         - [state 가 object/array 일 경우 변경하는 법](#state-%EA%B0%80-objectarray-%EC%9D%BC-%EA%B2%BD%EC%9A%B0-%EB%B3%80%EA%B2%BD%ED%95%98%EB%8A%94-%EB%B2%95)
     - [LocalStorage 를 사용한 데이터 저장](#localstorage-%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%80%EC%9E%A5)
+    - [React Query](#react-query)
 
 <!-- /TOC -->
 
@@ -719,3 +720,40 @@ let user = createSlice({
     - LocalStorage 를 삭제하지 않는 이상 반영구적이다.
     - 문자 데이터만 저장하기 때문에, object 나 array 를 저장할 시 데이터가 깨짐.
         - `JSON.stringify()` 함수를 사용하여 JSON 으로 변환해서 저장한다.
+
+<br>
+
+## React Query
+
+> 자동으로 실시간 데이터를 가져와야 하는 SNS, 코인거래소 같은 사이트에서 사용한다.
+
+- 용도
+    - 몇초마다 자동으로 데이터를 다시 가져오게 하는경우
+    - 요청실패시 몇초 간격으로 요청을 재시도 해야되는 경우
+    - 다음 페이지를 미리 가져와야 하는 경우
+    - ajax 성공/실패 시 각각 다른 html 을 보여줘야 하는 경우
+
+
+- 장점
+    1. ajax 요청 성공/실패/로딩중 상태를 쉽게 파악할 수 있다.
+    2. 자동으로 ajax 재요청을 해준다. (실패시에도 재시도 해줌)
+    3. ajax로 가져온 결과는 state 공유가 필요없다.
+        - 캐싱기능이 있기 때문에, ajax 요청하는 코드를 여러 컴포넌트에서 사용해도 한번만 요청하고, 같은 ajax 요청을 한적이 있으면 캐시에서 가져온다.
+
+- 사용법
+    ```javascript
+    function App(){
+        let result = useQuery('작명', ()=>
+            axios.get('https://codingapple1.github.io/userdata.json')
+            .then((a)=>{ return a.data })
+        )
+
+        return (
+            <div>
+            { result.isLoading && '로딩중' }
+            { result.error && '에러남' }
+            { result.data && result.data.name }
+            </div>
+        )
+    }
+    ```

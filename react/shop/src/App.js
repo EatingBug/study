@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import Detail from './pages/detail.js';
 import Cart from './pages/cart.js'
 import axios from 'axios'
+import { useQuery } from 'react-query';
 
 function App() {
 
@@ -16,6 +17,12 @@ function App() {
   let navigate = useNavigate();
   let [btnNum, setBtnNum] = useState(0);
   let [load, setLoad] = useState(false);
+
+  let result = useQuery('', ()=>
+    axios.get('https://codingapple1.github.io/userdata.json').then((a)=>{
+      return a.data
+    })
+  )
 
   // 로컬스토리지에 최근본 상품 저장
   useEffect(() => {
@@ -43,6 +50,9 @@ function App() {
             <Nav.Link onClick={() => { navigate('/detail/0') }}>Detail</Nav.Link>
             <Nav.Link onClick={() => { navigate('/event')}}>Event</Nav.Link>
             <Nav.Link onClick={() => { navigate('/cart')}}>Cart</Nav.Link>
+          </Nav>
+          <Nav className='ms-auto'>
+            { result.isLoading ? '로딩중' : result.data.name}
           </Nav>
         </Container>
       </Navbar>
