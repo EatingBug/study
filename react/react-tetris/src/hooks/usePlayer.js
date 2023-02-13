@@ -8,5 +8,7 @@ export function usePlayer() {
     collided: false,
   });
 
+  function updatePlayerPos(x, )
+
   return [player, setPlayer];
 }

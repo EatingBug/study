@@ -47,6 +47,8 @@
         - [useTransition, useDeferredValue](#usetransition-usedeferredvalue)
             - [useTransition](#usetransition)
             - [useDeferredValue](#usedeferredvalue)
+    - [PWA 셋팅해서 앱으로 발행하기](#pwa-%EC%85%8B%ED%8C%85%ED%95%B4%EC%84%9C-%EC%95%B1%EC%9C%BC%EB%A1%9C-%EB%B0%9C%ED%96%89%ED%95%98%EA%B8%B0)
+    - [state 변경함수 사용시 주의점 : async](#state-%EB%B3%80%EA%B2%BD%ED%95%A8%EC%88%98-%EC%82%AC%EC%9A%A9%EC%8B%9C-%EC%A3%BC%EC%9D%98%EC%A0%90--async)
 
 <!-- /TOC -->
 
@@ -947,3 +949,53 @@ function App(){
 }
 ```
 - `useDeferredValue` 안에 state 를 넣으면 해당 state 가 변동사항이 생겼을 때 나중에 처리해준다. 그리고 처리결과는 `let state1`에 저장해준다.
+
+<br>
+
+## PWA 셋팅해서 앱으로 발행하기
+
+> project 생성시 PWA 로 만들면 앱으로 발행할 수 있다.
+
+<br>
+
+## state 변경함수 사용시 주의점 : async
+
+- 자바스크립트는 기본적으로 synchronous 하게 처리되지만, 특정함수 사용시 asynchronous 하게 처리된다.
+    - `ajax`
+    - `eventListener`
+    - `setTimeout`
+    - `setState()` : state 변경함수
+
+<br>
+
+- 예시
+    ```javascript
+    <button onClick={()=>{
+
+        setCount(count+1);
+        if ( count < 3 ) {
+            setAge(age+1);
+        }
+    
+    }}>누르면한살먹기</button> 
+    ```
+    - 버튼을 누르면 count + 1 증가합니다. 하지만 count 가 3일 때도 `setAge()` 가 실행된다.
+    - state 변경함수가 비동기적으로 실행되기때문에 `setCount()` 가 실행되기전에 if 조건문이 먼저 실행되기 때문이다.
+
+    <br>
+    
+    - 이러한 경우 `useEffect()` 를 통해 해결할 수 있다.
+    ```javascript
+    useEffect(()=>{
+        // 페이지 처음 로드시 실행되는 것을 방지하기 위해 (count != 0)조건추가
+        if ( count != 0 && count < 3 ) { 
+            setAge(age+1)
+        }
+    }, [count])
+
+    <button onClick={()=>{
+
+        setCount(count+1);
+
+    }}>누르면한살먹기</button> 
+    ```

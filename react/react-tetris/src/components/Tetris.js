@@ -18,11 +18,44 @@ function Tetris() {
     let [dropTime, setDropTime] = useState(null);
     let [gameOver, setGameOver] = useState(false);
 
-    let [player] = usePlayer();
+    let [player, updatePlayerPos, resetPlayer] = usePlayer();
     let [stage, setStage] = useStage(player);
 
+    console.log('re-render');
+
+    let movePlayer = (dir) => {
+        updatePlayerPos({x: dir, y: 0})
+    }
+
+    let startGame = () => {
+        console.log('test')
+        setStage(createStage());
+        resetPlayer();
+    }
+
+    let drop = () => {
+        updatePlayerPos({ x: 0, y: 1, collided: false})
+    }
+
+    let dropPlayer = () => {
+        drop();
+    }
+
+    let move = ({keyCode}) => {
+        if (!gameOver) {
+            if (keyCode === 37) {
+                movePlayer(-1);
+            } else if (keyCode === 39) {
+                movePlayer(1);
+            } else if (keyCode === 40) {
+                dropPlayer();
+            }
+        }
+    }
+
+
     return (
-        <StyledTetrisWrapper>
+        <StyledTetrisWrapper role='button' tabIndex='0' onKeyDown={e => move(e)}>
             <StyledTetris>
                 <Stage stage={stage} />
                 <aside>
@@ -36,7 +69,7 @@ function Tetris() {
                                 </div>
                             )
                     }
-                    <StartButton />
+                    <StartButton callback={startGame}/>
                 </aside>
             </StyledTetris>
         </StyledTetrisWrapper>
