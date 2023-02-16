@@ -24,8 +24,16 @@
             - [Method 와 포인터](#method-%EC%99%80-%ED%8F%AC%EC%9D%B8%ED%84%B0)
         - [Interface](#interface)
             - [인터페이스 타입 변환](#%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%ED%83%80%EC%9E%85-%EB%B3%80%ED%99%98)
-    - [- 다른 인터페이스로 타입 변환](#--%EB%8B%A4%EB%A5%B8-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4%EB%A1%9C-%ED%83%80%EC%9E%85-%EB%B3%80%ED%99%98)
+            - [인터페이스](#%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4)
+        - [Errors](#errors)
+            - [Readers](#readers)
+            - [Images](#images)
     - [동시성](#%EB%8F%99%EC%8B%9C%EC%84%B1)
+        - [Goroutines](#goroutines)
+        - [Channel](#channel)
+        - [Range 와 Close](#range-%EC%99%80-close)
+        - [Select](#select)
+            - [Mutex](#mutex)
 
 <!-- /TOC -->
 
@@ -461,7 +469,152 @@ type DuckInterface interface {
 	}
 	- 인터페이스 메서드가 구현되어있는 타입이면 변환이 가능하다.
 
-- 다른 인터페이스로 타입 변환
-	- 
-	
+<br>
+
+#### 인터페이스
+
+- `fmt` 패키지에 정의된 `Stringer` 은 자신을 문자열로 설명할 수 있는 타입
+	- `fmt` 패키지 및 기타 여러 패키지는 값을 출력하기 위해 이 인터페이스를 사용한다.
+
+<br>
+
+### Errors
+
+- Go 프로그램은 `error` 값으로 오류 상태를 표현
+- error 타입은 `fmt.Stringer` 와 유사한 내장 인터페이스
+
+```go
+type error interface {
+	Error() string
+}
+```
+
+<br>
+
+#### Readers
+
+- io 패키지는 데이터 스트림의 읽기를 나타내는 io.Reader 인터페이스를 지정한다.
+	- strings.Reader 는 한번에 8바이트 씩 사용한다.
+```go
+func (T) Read(b []byte) (n int, err error)
+```
+- Read 는 주어진 바이트 조각을 데이터로 체우고 채워진 바이트 수와 오류 값을 반환합니다. 스트림이 종료되면 io.EOF 오류를 반환합니다.
+
+<br>
+
+#### Images
+
+> Package image 는 Image 인터페이스를 정의합니다.
+
+```go
+package image
+
+type Image interface {
+	ColorModel() color.Model
+	Bounds() Rectangle
+	At(x, y int) color.Color
+}
+```
+
+
 ## 동시성
+
+### Goroutines
+
+> Go 런타임에 의해 관리되는 경량 쓰레드.
+> - 일반적인 스레드보다 전환의 오버헤드가 더 적고 가볍다.
+
+```go
+go f(x, y, z)
+```
+- f와 x, y, z의 evaluation 은 현재의 goroutine 에서 일어나고, f 의 실행은 새로운 goroutine 에서 일어난다.
+- goroutine은 같은 주소의 공간에서 실행되고, 따라서 공유된 메모리는 synchronous(동기적) 해야합니다.
+
+<br>
+
+### Channel
+
+> 채널 연산자인 `<-` 를 통해 값을 주고 받을 수 있는 하나의 분리된 통로다.
+
+```go
+ch <- v // 채널 ch에 v 를 전송
+v := <- ch // ch 로부터 값을 받고, v에 대입한다.
+```
+
+- channel 은 map 과 slice처럼 사용하기 전에 생성되어야 한다.
+```go
+ch := make(chan int)
+```
+
+- Channel 은 `buffered` 될 수 있다. (=버퍼를 가질 수 있다.)
+```go
+ch := make(chan int, 100) // 두번째 인자로 buffer 길이를 받을 수 있다.
+```
+- buffer 로부터의 수신은 그 buffer 가 비어있을 때 block
+
+<br>
+
+### Range 와 Close
+
+- 전송자는 더 이상 보낼 데이터가 없다는 것을 암시하기 위해 channel 을 close 할 수 있다.
+- channel 을 닫는 것은 range 반복문을 종료시키는 것과 같이 수신자가 더 이상 들어오는 값이 없다는 것을 알아야 하는 경우에만 필요하다.
+	```go
+	v, ok := <-ch
+	```
+	- 수신할 값이 없고, channel 이 닫혀있다면 ok 는 false다.
+
+> 절대로 수신자가 아닌 전송자만이 channel 을 닫아야 한다. 닫힌 channel 에 전송하는 것은 panic 을 야기한다.
+
+<br>
+
+### Select
+
+> goroutine 이 다중 커뮤니케이션 연산에서 대기할 수 있게 해준다.
+
+- `select`는 자의 case들 중 하나가 실행될 때까지 block 된다.
+	- 만약 다수의 case가 준비되는 경우에는 select 가 무작위로 하나를 선택한다.
+```go
+// fibonacci 함수는 두 개의 채널을 받아서 피보나치 수열을 생성합니다.
+// c 채널로 수열을 전달하며, quit 채널로 종료 요청을 받습니다.
+func fibonacci(c, quit chan int) {
+	x, y := 0, 1
+	for {
+		// select 구문을 사용하여 c나 quit 채널 중 하나가 값을 보낼 때까지 기다립니다.
+		select {
+		// c 채널로 값을 보냅니다.
+		case c <- x:
+			// 피보나치 수열의 다음 값을 계산합니다.
+			x, y = y, x+y
+		// quit 채널로 값이 전송되면 함수를 종료합니다.
+		case <-quit:
+			fmt.Println("quit")
+			return
+		}
+	}
+}
+func main() {
+	// 두 개의 채널을 생성합니다.
+	c := make(chan int)
+	quit := make(chan int)
+	// 익명 함수를 고루틴으로 실행합니다.
+	go func() {
+		// 10개의 피보나치 수열 값을 c 채널에서 받습니다.
+		for i := 0; i < 10; i++ {
+			fmt.Println(<-c) // c 채널에서 값이 올때까지 block 상태
+		}
+		// quit 채널로 종료 요청을 보냅니다.
+		quit <- 0
+	}()
+	// fibonacci 함수를 호출합니다.
+	fibonacci(c, quit)
+}
+```
+
+- `default` 를 사용하면 case 들이 모두 준비되지 않았을 때 실행
+	- block 없이 전송이나 수신을 수행할 때 사용
+
+#### Mutex
+
+> 하나의 goroutine 만이 어떤 변수에 접근할 수 있도록 `mutual exclusion` 상태로 만들어주는 기능
+
+- `Lock(), Unlock()` 을 통해 mutex 를 관리할 수 있다.
