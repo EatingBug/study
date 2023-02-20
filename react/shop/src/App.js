@@ -26,13 +26,15 @@ function App() {
       return a.data
     })
   )
+  let watched = localStorage.getItem('watched')
+
 
   // 로컬스토리지에 최근본 상품 저장
   useEffect(() => {
-    let watched = localStorage.getItem('watched')
+    watched = localStorage.getItem('watched')
     if (watched == null) {
       localStorage.setItem('watched', JSON.stringify([]))
-    }
+    } 
   }, [])
 
   function moreShoe(data) {
@@ -64,6 +66,23 @@ function App() {
           <Route path='/' element={
             <>
               <div className='main-bg' style={{ backgroundImage: 'url(' + shoes + ')' }}></div>
+              <div className='view-box'>
+                <p style={{ marginTop: '10px' }}>최근 본 상품</p>
+                {
+                  watched != null
+                    ? watched.map((a, i) => {
+                      console.log(watched)
+                      // return (
+                      //   <div>
+                      //     <p className='watched' style={{ marginTop: '10px' }} >
+                      //       { watched[i] }
+                      //     </p>
+                      //   </div>
+                      // )
+                    })
+                    : null
+                }
+              </div>
               <Container>
                 <Row>
                   {
@@ -99,6 +118,7 @@ function App() {
               </Container>
             </>
           } />
+
           <Route path='/detail/:id' element={
             <Detail shoe={shoe} />
           } />
