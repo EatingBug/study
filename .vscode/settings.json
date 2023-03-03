@@ -1,7 +1,3 @@
 {
-    "cSpell.ignoreWords": [
-        "Println",
-        "Proto",
-        "struct"
-    ]
+  "cSpell.ignoreWords": ["Println", "Proto", "chromedp", "naver", "struct"]
 }
