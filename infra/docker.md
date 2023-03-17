@@ -479,8 +479,15 @@ docker import rootFS.tar myimage:0.0
 이를 해결하기 위한 방법은
 
 1. 도커 허브 이미지 저장소 사용
-   - `docker push`
-   - `docker pull`
+
+- `docker push` 로 이미지 올리기
+- `docker pull` 로 이미지 가져오기
+
+2. 도커 사설 레지스트리를 사용
+
+- 사용자가 직접 이미지 저장소 및 서버, 저장공간 등을 관리해야 하므로 도커 허브보다 사용법이 까다롭다.
+
+<br>
 
 ### Dockerfile
 
