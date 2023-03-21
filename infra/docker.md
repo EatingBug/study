@@ -30,6 +30,9 @@
       - [이미지 추출](#%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B6%94%EC%B6%9C)
       - [이미지 배포](#%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B0%B0%ED%8F%AC)
     - [Dockerfile](#dockerfile)
+      - [이미지를 생성하는 방법](#%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A5%BC-%EC%83%9D%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
+      - [Dockerfile 작성](#dockerfile-%EC%9E%91%EC%84%B1)
+      - [Dockerfile 빌드](#dockerfile-%EB%B9%8C%EB%93%9C)
     - [도커 데몬](#%EB%8F%84%EC%BB%A4-%EB%8D%B0%EB%AA%AC)
   - [도커 스웜](#%EB%8F%84%EC%BB%A4-%EC%8A%A4%EC%9B%9C)
   - [도커 컴포즈](#%EB%8F%84%EC%BB%A4-%EC%BB%B4%ED%8F%AC%EC%A6%88)
@@ -480,16 +483,90 @@ docker import rootFS.tar myimage:0.0
 
 1. 도커 허브 이미지 저장소 사용
 
-- `docker push` 로 이미지 올리기
+- `docker push [저장소 이름]/[이미지 이름]:[태그]` 로 이미지 올리기
+  - 도커 허브로 올리기 위해서는 이미지 명을 규칙에 맞게 변경해야 한다
+    - `docker tag my-image-name:0.0 eatingbug/my-image-name:0.0`
 - `docker pull` 로 이미지 가져오기
 
-2. 도커 사설 레지스트리를 사용
+2. 도커 사설 레지스트리를 사용 (추가공부 필요)
 
 - 사용자가 직접 이미지 저장소 및 서버, 저장공간 등을 관리해야 하므로 도커 허브보다 사용법이 까다롭다.
+
+  ```sh
+  docker run -d --name myregistry \
+  -p 5000:5000 \
+  --restart=always \
+  registry:2.6
+  ```
+
+  - `--restart` : 컨테이너가 종료됐을 때 재시작에 대한 정책설정
+
+  ```sh
+  // 사설 레지스트리에 push
+  docker tag my-image-name:0.0 ${DOCKER_HOST_IP}:5000/my-image-name:0.0
+
+  docker push 192.168.99.101:5000/my-image-name:0.0
+  ```
+
+  - 기본적으로 도커 데몬은 HTTPS 를 사용하지 않는 레지스트리 컨테이너에 접근하지 못하도록 설정
+    - `DOCKER_OPTS="--insecure-registry=192.168.99.101:5000"` 를 통해 HTTPS 를 사용하지 않는 레지스트리 컨테이너에 이미지를 push, pull 할 수 있다.
+
+  > 레지스트리 컨테이너는 생성됨과 동시에 컨테이너 내부 디렉토리에 마운트되는 도커 볼륨을 생성한다. 컨테이너가 삭제돼도 볼륨은 남아있는데, `docker rm --volumes` 옵션을 사용하면 컨테이너를 삭제할 때 볼륨도 같이 삭제된다.
 
 <br>
 
 ### Dockerfile
+
+#### 이미지를 생성하는 방법
+
+> 완성된 이미지를 생성하기 위해 컨테이너에 설치해야 하는 패키지, 추가해야 하는 소스코드, 등을 하나의 파일(=Dockerfile) 에 기록해두면 도커는 이 파일을 읽어 컨테이너에서 작업을 수행한 뒤 이미지로 생성한다.
+
+- 애플리케이션에 필요한 패키지 설치 등을 명확히 할 수 있다.
+- 이미지 생성을 자동화할 수 있으며, 쉽게 배포할 수 있다.
+
+<br>
+
+#### Dockerfile 작성
+
+- docker engine 은 Dockerfile 을 읽어들일 때 기본적으로 현재 디렉토리에 있는 Dockerfile 을 선택한다.
+
+1. `FROM` : 생성할 이미지의 베이스가 될 이미지
+2. `MAINTAINER` : 이미지를 생성한 개발자의 정보
+3. `LABEL` : 이미지에 메타데이터 추가
+4. `RUN` : 이미지를 만들기 위해 컨테이너 내부에서 명령어를 실행
+   - 이미지를 빌드할 때 별도의 입력을 받아야 하는 RUN 이 있다면 build 명령어는 이를 오류로 간주하고 빌드를 종료한다.
+5. `ADD` : 파일을 이미지에 추가
+6. `WORKDIR` : 명령어를 실행할 디렉토리를 나타낸다.
+7. `EXPOSE` : Dockerfile 의 빌드로 생성된 이미지에서 노출할 포트를 설정
+8. `CMD` : 컨테이너가 시작될 때마다 실행할 명령어를 설정하며, Dockerfile에서 한번만 사용가능
+
+<br>
+
+#### Dockerfile 빌드
+
+```sh
+docker build -t mybuild:0.0 ./
+```
+
+- `-t` : 생성될 이미지의 이름을 설정
+  - `-t` 옵션을 사용하지 않으면 16진수 형태의 이름으로 이미지가 저장된다.
+- `./` : build 명령어 끝에는 Dockerfile 이 저장된 경로를 입력
+
+```sh
+docker run -d -P --name myserver mybuild:0.0
+docker port myserver // 또는 docker ps 사용
+```
+
+- `-P` : 이미지에 설정된 EXPOSE 의 모든 포트를 호스트에 연결하도록 설정
+  - 해당 컨테이너가 호스트의 어떤 포트와 연결됐는지 확인할 필요가 있음
+- `docker port` : 컨테이너와 연결된 호스트의 포트를 확인
+
+<br>
+
+- 이미지 빌드를 시작하면 도커는 가장 먼저 빌드 Context 를 읽어 들인다.
+  - 빌드 Context 는 이미지 생성에 필요한 파일, 소스코드 등등을 담고있는 디렉토리를 의미
+- Context 는 build 명령어의 맨 마지막에 지정된 위치에 있는 파일을 전부 포함한다.
+  - 따라서 Dockerfile 이 위치한 곳에는 이미지 빌드에 필요한 파일만 있는 것이 바람직하며, 루트 디렉토리와 같은 곳에서 이미지를 빌드하지 않도록 주의
 
 ### 도커 데몬
 
