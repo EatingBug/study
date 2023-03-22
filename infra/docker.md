@@ -33,6 +33,9 @@
       - [이미지를 생성하는 방법](#%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A5%BC-%EC%83%9D%EC%84%B1%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
       - [Dockerfile 작성](#dockerfile-%EC%9E%91%EC%84%B1)
       - [Dockerfile 빌드](#dockerfile-%EB%B9%8C%EB%93%9C)
+      - [멀티 스테이지를 이용한 Dockerfile 빌드하기](#%EB%A9%80%ED%8B%B0-%EC%8A%A4%ED%85%8C%EC%9D%B4%EC%A7%80%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-dockerfile-%EB%B9%8C%EB%93%9C%ED%95%98%EA%B8%B0)
+      - [기타 Dockerfile 명령어](#%EA%B8%B0%ED%83%80-dockerfile-%EB%AA%85%EB%A0%B9%EC%96%B4)
+      - [Dockerfile로 빌드할 때 주의할 점](#dockerfile%EB%A1%9C-%EB%B9%8C%EB%93%9C%ED%95%A0-%EB%95%8C-%EC%A3%BC%EC%9D%98%ED%95%A0-%EC%A0%90)
     - [도커 데몬](#%EB%8F%84%EC%BB%A4-%EB%8D%B0%EB%AA%AC)
   - [도커 스웜](#%EB%8F%84%EC%BB%A4-%EC%8A%A4%EC%9B%9C)
   - [도커 컴포즈](#%EB%8F%84%EC%BB%A4-%EC%BB%B4%ED%8F%AC%EC%A6%88)
@@ -567,6 +570,57 @@ docker port myserver // 또는 docker ps 사용
   - 빌드 Context 는 이미지 생성에 필요한 파일, 소스코드 등등을 담고있는 디렉토리를 의미
 - Context 는 build 명령어의 맨 마지막에 지정된 위치에 있는 파일을 전부 포함한다.
   - 따라서 Dockerfile 이 위치한 곳에는 이미지 빌드에 필요한 파일만 있는 것이 바람직하며, 루트 디렉토리와 같은 곳에서 이미지를 빌드하지 않도록 주의
+
+<br>
+
+#### 멀티 스테이지를 이용한 Dockerfile 빌드하기
+
+> 17.05 버전 이상을 사용하는 도커 엔진이라면 이미지의 크기를 줄이기 위해 멀티 스테이지(Multi-stage) 빌드 방법을 사용할 수 있다.
+
+- 멀티 스테이지 빌드는 하나의 Dockerfile 안에 여러개의 FROM 이미지를 정의함으로써 빌드 완료 시 최종적으로 생성될 이미지의 크기를 줄이는 역할
+
+```docker
+FROM golang
+ADD main.go /root
+WORKDIR /root
+RUN go build -o /root/mainApp /root/main.go
+
+FROM alpine:latest
+WORKDIR /root
+COPY --from=0 /root/mainApp .
+CMD ["./mainApp"]
+```
+
+- `--from=0` : 첫 번째 FROM 에서 빌드된 이미지의 최종 상태를 의미
+  - 첫 번째 FROM 이미지에서 빌드한 `/root/mainApp` 을 두 번째 이미지로 복사
+- `alpine` : 우분투나 CentOS 에 비해 이미지 크기가 매우 작지만 필수적인 런타임 요소가 포함되어 있는 리눅스 배포판 이미지
+  - 경량화된 애플리케이션 이미지를 간단히 생성가능
+
+<br>
+
+#### 기타 Dockerfile 명령어
+
+- `ENV` : 환경변수 지정
+  - `run -e` 옵션을 사용해 같은 이름의 환경변수를 사용하면 덮어 쓰여진다.
+- `VOLUME` : 빌드된 이미지로 컨테이너를 생성했을 때 호스트와 공유할 컨테이너 내부의 디렉토리를 설정
+- `ARG` : build 명령어를 실행할 때 추가로 입력을 받아 Dockerfile 내에서 사용될 변수의 값을 설정
+- `USER` : USER로 컨테이너 내에서 사용될 사용자 계정의 이름이나 UID 를 설정하면 그 아래의 명령어는 해당 사용자 권한으로 실행
+  - 루트 권한이 필요하지 않다면 USER 를 사용하는 것을 권장
+- `ONBUILD` : 빌드된 이미지를 기반으로 하는 다른 이미지가 Dockerfile로 생성될 때 실행할 명령어를 추가
+- `STOPSIGNAL` : 컨테이너가 정지될 때 사용될 시스템 콜의 종류를 지정
+- `HEALTHCHECK` : 이미지로부터 생성된 컨테이너에서 동작하는 애플리케이션의 상태를 체크하도록 설정
+- `COPY` : 로컬 디렉토리에서 읽어 들인 컨텍스트로부터 이미지에 파일을 복사하는 역할
+  - `COPY` 는 로컬의 파일만 이미지에 추가할 수 있지만, `ADD` 는 외부 URL 및 tar 파일에서도 파일을 추가할 수 있다.
+- `ENTRYPOINT` : 커맨드와 동일하게 컨테이너가 시작될 때 수행할 명령을 지정
+  - CMD 와의 차이점 :
+
+<br>
+
+#### Dockerfile로 빌드할 때 주의할 점
+
+- 하나의 명령어를 \ 로 나눠서 가독성 향상
+- `.dockerignore` 파일을 작성해 불필요한 파일을 빌드 컨텍스트에 포함하지 않는 것
+- 빌드 캐시를 이용해 기존에 사용했던 이미지 레이어를 재사용
 
 ### 도커 데몬
 
